@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('Your Wishlist - ShopY')}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Wishlist - ShopY</title>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<!-- Wishlist Section -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <h3 class="text-center mb-5 fw-bold position-relative display-5 text-uppercase" data-aos="fade-up">
+			    <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+					<i class="bi bi-bookmark "></i> Your Wishlist
+			    </span>
+			</h3>
+        <div class="row">
+            <!-- Wishlist Items -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-lg" data-aos="fade-right">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0 fw-semibold">Saved Items</h5>
+                    </div>
+                    <div class="card-body p-0">
+                    
+                     <!-- Show if empty -->
+                            <div th:if="${#lists.isEmpty(wishListItems)}" class="text-center py-5">
+								<p class="text-muted fs-5">❤️ Buddy Your WishList is empty.</p>
+                            </div>
+                            '
+                        <!-- Wishlist Item -->
+                        <div class="d-flex p-3 border-bottom align-items-center wishlist-item hover-shadow" th:each="s : ${wishListItems}">
+                                <img th:src="@{/admin/public/showProductImage(imageId=${s.product.id})}" alt="Product Image" class="img-fluid me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold" th:text="${s.product.productname}">Bluetooth Speaker</h6>
+                                <p class="text-muted small mb-1" th:if="${s.product.brand!=null}" th:text="${s.product.brand.brandName}">Brand : Blue</p>
+                                <p class="fw-bold text-success mb-0" th:text="${'₹ '+s.product.mrp}">$49.99</p>
+                            </div>
+                            <div class="text-end">
+                                <!-- <a th:onclick="'addItemsToCart(' + ${s.product.id} + ', 1);'" class="btn btn-outline-primary btn-sm mb-2"><i class="fas fa-cart-plus me-1"></i>Add to Cart</a> -->
+                                
+                                 <a style="cursor: pointer;"
+								   th:onclick="'if(confirm(\'Are you sure you want to remove this product from the WishList?\')) removeItemFromWishList(' + ${s.product.id} + ')'"
+								   class="text-danger">
+								   <i class="fas fa-trash-alt"></i> Remove
+								</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist Summary -->
+            
+            
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-lg" data-aos="fade-left">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0 fw-semibold">Wishlist Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">You have <strong th:text="${wishListCount !=null ? wishListCount + ' items' : '0 items'}">3 items</strong> in your wishlist.</p>
+                        <a th:href="@{/customer/showWebsite}" class="btn btn-secondary w-100 mb-2">
+                            <i class="fas fa-store me-1"></i> Continue Shopping
+                        </a>
+                        <a th:href="@{customerCart}" class="btn btn-primary w-100">
+                            <i class="fas fa-shopping-cart me-1"></i> Go to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+
+    <div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+
+<!-- AOS Initialization -->
+<script>
+    AOS.init({ duration: 800, once: true });
+</script>
+
+<script type="text/javascript">
+
+function addItemsToCart(productId, quantity) {
+
+	  const mainProductQuantity = parseFloat($("#totalQuantity" + productId).html());
+      const selectedProductQuantity = parseFloat($("#quantity" + productId).val());
+      
+      if (mainProductQuantity <= selectedProductQuantity) {
+          showToast(`😕 Sorry, only ${mainProductQuantity} unit(s) of this product are available.`);
+          return false;
+      }
+      
+    $.ajax({
+        type: "POST",
+        url: "/pisoft/shoppingCart/addItemsToCart",
+        data: { productId, quantity },
+        success: function (response) {
+            $("#cartId").html(response);
+            showToast("Product added to cart successfully", 'success');
+        },
+        error: function () {
+            // handle error
+        }
+    });
+}
+
+function removeItemFromWishList(productId) {
+    $.ajax({
+        type: "GET",
+        url: "removeItemfromWishList",
+        data: { productId },
+        success: function () {
+            window.location.reload();
+            showToast("Product removed from wishList successfully", 'danger');
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+</script>
+
+<style>
+    .wishlist-item:hover {
+        background-color: #f9f9f9;
+    }
+</style>
+
+</body>
+</html>

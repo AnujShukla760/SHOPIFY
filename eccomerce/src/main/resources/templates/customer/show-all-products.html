@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - ShopY</title>
+         <link rel="icon" th:href="@{/img/fav.png}" type="image/png" />
+    
+    <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  
+  
+  <!-- AOS CSS -->
+  
+<link rel="stylesheet" th:href="@{/website/css/website.css}">
+
+    <style>
+        .filter-box1 {
+            background-color: #E2E2E2;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .custom-range1 {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #d3d3d3;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .custom-range1:hover {
+            background: #bbb;
+        }
+
+        .custom-range1::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #0d6efd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            margin-top: -5px;
+        }
+
+        .custom-range1::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #0d6efd;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .custom-range1::-webkit-slider-runnable-track {
+            height: 8px;
+            background: #d3d3d3;
+            border-radius: 5px;
+        }
+
+        .product-card1:hover {
+            transform: translateY(-5px);
+            transition: 0.3s ease-in-out;
+        }
+
+        .product-img1 {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        #rangeValue {
+	    font-size: 0.85rem;
+	    padding: 5px 10px;
+	    pointer-events: none;
+	    transform: translate(-50%, -150%) !important;
+}
+
+.no-products-box {
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+        
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<!-- Main Content -->
+
+<!-- Message when no products are available -->
+<div class="container no-products-box" th:if="${#lists.isEmpty(productList)}" style="margin-top: 105px" data-aos="zoom-in">
+    <div class="text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="No products" width="150" class="mb-4" />
+        <h4 class="text-muted">Oops! No products found for this category.</h4>
+        <p class="text-secondary">We’re sorry, but there are no products available in this section right now.<br> Try exploring other categories or check back later.</p>
+        <a th:href="@{/customer/showWebsite}" class="btn btn-primary mt-3">
+            <i class="fa fa-home me-1"></i> Go to Homepage
+        </a>
+    </div>
+</div>
+
+
+<div class="container-fluid" style="margin-top: 105px" th:unless="${#lists.isEmpty(productList)}">
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="filter-box1 shadow-sm" data-aos="fade-right" >
+                <h5>Filters</h5>
+                <hr>
+                <h6>Price</h6>
+				<div class="position-relative">
+				  <input type="range" class="form-range custom-range1" min="0" max="10000" step="100" id="priceRange">
+				  <div id="rangeValue" class="position-absolute top-0 start-50 translate-middle badge bg-primary">
+				    ₹0
+				  </div>
+				</div>
+				<div class="d-flex justify-content-between text-muted">
+				  <span>₹0</span>
+				  <span>₹10,000</span>
+				</div>
+
+
+                <h6 class="mt-4">Brand</h6>
+				<div>
+				    <div class="form-check" th:each="b : ${brandList}">
+					    <input class="form-check-input brand-filter"
+					           type="checkbox"
+					           th:value="${b.brandName}"
+					           th:id="${'brand_' + b.brandName}" />
+					    <label class="form-check-label"
+					           th:for="${'brand_' + b.brandName}"
+					           th:text="${b.brandName}">Brand</label>
+					</div>
+
+				</div>
+
+
+                <h6 class="mt-4">Category</h6>
+                <div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Shoes" id="cat1">
+                        <label class="form-check-label" for="cat1">Shoes</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Slippers" id="cat2">
+                        <label class="form-check-label" for="cat2">Slippers</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+                <!-- Product 1 -->
+                <div class="col-md-4" th:each="p : ${productList}"  th:attr="data-price=${p.mrp}, data-brand=${p.brand.brandName}">
+
+				  <div class="card product-card1 h-100 shadow-lg position-relative">
+				
+				    <!-- Stock Badge -->
+				    <p class="text-end mb-1">
+					  <span class="badge fs-9 me-1" id="stock"
+					        th:classappend="${p.quantity > 0} ? 'bg-success' : 'bg-danger'" 
+					        th:text="${p.quantity > 0} ? 'In Stock' : 'Out of Stock'">In Stock
+					  </span>
+					</p>
+
+
+				    <!-- Product Image -->
+				    <img th:src="@{/admin/public/showProductImage(imageId=${p.productImages[0].id})}" class="card-img-top product-img1" alt="Nike Shoes">
+				
+				    <!-- Product Details -->
+				    <div class="card-body text-center">
+				      <h6 class="card-title" th:text="${p.productname}">Nike Running Shoes</h6>
+				      <p class="card-text text-muted" th:text="${p.brand.brandName}">Nike</p>
+				      <p class="fw-bold text-success" th:text="${'₹' + p.mrp}">₹ 2,999</p>
+				
+				      <!-- Action Icons -->
+				      <div class="row justify-content-center">
+				        <div class="col-2">
+				          <a th:if="${loggedUser == null}" th:href="@{/users/userLoginForm}" class="btn btn-outline-danger btn-sm" title="Wishlist">
+				            <i class="fa-solid fa-heart"></i>
+				          </a>
+				          <a th:if="${loggedUser != null}" th:onclick="'addItemsToWishList(' + ${p.id} + ')'" target="_blank" class="btn btn-outline-danger btn-sm" title="Wishlist">
+				            <i class="fa-solid fa-heart"></i>
+				          </a>
+				        </div>
+				        <div class="col-2">
+				          <a th:if="${loggedUser == null}" th:href="@{/users/userLoginForm}" class="btn btn-outline-primary btn-sm" title="Add To Cart">
+				            <i class="fa-solid fa-cart-plus"></i>
+				          </a>
+				          <a th:if="${loggedUser != null}" th:onclick="'addItemsToCart(' + ${p.id} + ', 1)'" target="_blank" class="btn btn-outline-primary btn-sm" title="Add to Cart">
+				            <i class="fa-solid fa-cart-plus"></i>
+				          </a>
+				        </div>
+				        <div class="col-2">
+				          <a th:href="@{productView(id=${p.id})}" class="btn btn-outline-warning btn-sm" title="View List">
+				            <i class="fa-solid fa-eye"></i>
+				          </a>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+<!-- Common JS -->
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+
+<!-- AOS Init -->
+<script>
+    AOS.init();
+</script>
+
+<script>
+  $(document).ready(function () {
+
+    const $priceRange = $('#priceRange');
+    const $rangeValue = $('#rangeValue');
+    const $brandFilters = $('.brand-filter');
+
+    function filterProducts() {
+      const maxPrice = parseInt($priceRange.val());
+      const selectedBrands = $brandFilters
+        .filter(':checked')
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+      $('[data-price]').each(function () {
+        const price = parseInt($(this).data('price'));
+        const brand = $(this).data('brand');
+
+        const matchPrice = price <= maxPrice;
+        const matchBrand = selectedBrands.length === 0 || selectedBrands.includes(brand);
+
+        if (matchPrice && matchBrand) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+
+      $rangeValue.text(`₹${maxPrice}`);
+    }
+
+    // Initial load
+    filterProducts();
+
+    // Event listeners
+    $priceRange.on('input', filterProducts);
+    $brandFilters.on('change', filterProducts);
+  });
+  
+  
+  </script>
+  
+  
+  <script type="text/javascript">
+  
+  function addItemsToWishList(productId){
+
+	  const stockCheck = $("#stock").html();
+	  /*  In Stock */
+	  	  if(stockCheck=='Out of Stock'){
+
+	  		  showToast("😞 Oops! This item is temporarily out of stock.");
+	  		return false;
+	  	  }
+
+	  $.ajax({
+
+		  type: "POST",
+		  url: "/pisoft/wishList/addItemsToWishList",
+		  data: {
+			  productId:productId,
+		  },
+		  success:function(response){
+
+			  $("#wishListId").html(response);
+			  showToast("Item Added to WishList Successfully")
+			  
+			  
+		  },
+		  
+		  error: function(res){
+			// error handling :
+		  }
+	  });
+  
+  
+  }
+  
+  function addItemsToCart(productId , quantity){
+
+	  const stockCheck = $("#stock").html();
+/*  In Stock */
+	  if(stockCheck=='Out of Stock'){
+
+		  showToast("😞 Oops! This item is temporarily out of stock.");
+		return false;
+	  }
+	  
+	  $.ajax({
+
+		  type: "POST",
+		  url: "/pisoft/shoppingCart/addItemsToCartForSingleProduct",
+		  data: {
+
+			  productId:productId,
+			  quantity:quantity
+		  },
+		  success: function(response) {
+			    // response is an object with {status: "added" or "exists", count: number}
+			    if(response.status === "exists") {
+			        showToast(
+			          "🛒 This item is already in your cart. To increase quantity, please update it from your cart.",
+			          'danger'
+			        );
+			    } else if(response.status === "added") {
+			        showToast("✅ Item added to cart successfully!", 'success');
+			    }
+
+			    $("#cartId").html(response.count);
+			},
+		  error: function(res){
+			// error handling :
+		  }
+	  });
+  }
+  
+  </script>
+
+<!-- Toast & AOS -->
+    <div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+</body>
+</html>

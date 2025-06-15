@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('My Orders - ShopY')}"></head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    getPendingOrders1("PENDING");
+});
+
+function getPendingOrders1(statusValue) {
+    $.ajax({
+        type: "GET",
+        url: "customerOrderAjax",
+        data: { statusValue },
+        success: function (response) {
+            $("#pendingTableId").html(response)
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+
+function getPendingOrders(status) {
+    var status  = $(status).html();
+    var statusValue= status.toUpperCase();
+
+    $.ajax({
+        type: "GET",
+        url: "customerOrderAjax",
+        data: { statusValue },
+        success: function (response) {
+            $("#pendingTableId").html(response)
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+
+function getDeliveredOrders(status) {
+    var status  = $(status).html();
+    var statusValue= status.toUpperCase();
+
+    $.ajax({
+        type: "GET",
+        url: "customerOrderAjax",
+        data: { statusValue },
+        success: function (response) {
+            $("#deliveredTableId").html(response)
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+
+function getOnGoingOrders(status) {
+    var status  = $(status).html();
+    var statusValue= status.toUpperCase();
+
+    $.ajax({
+        type: "GET",
+        url: "customerOrderAjax",
+        data: { statusValue },
+        success: function (response) {
+            $("#ongoingTableId").html(response)
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+
+function getCancelledOrders(status) {
+    var status  = $(status).html();
+    var statusValue= status.toUpperCase();
+
+    $.ajax({
+        type: "GET",
+        url: "customerOrderAjax",
+        data: { statusValue },
+        success: function (response) {
+            $("#cancelledTableId").html(response)
+        },
+        error: function (res) {
+            console.error("Error removing item:", res);
+        }
+    });
+}
+
+</script>
+
+<!-- Cancel Order Confirmation Modal with Reason -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <form th:action="@{/customer/customerOrderCancel}" method="post">
+          <input type="hidden" id="cancelOrderId" name="id" />
+      
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to cancel this order? Please provide a reason:</p>
+          <div class="mb-3">
+            <label for="cancelReason" class="form-label">Cancellation Reason</label>
+            <textarea class="form-control" id="cancelReason" name="cancelReason" rows="4" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep Order</button>
+          <button type="submit" class="btn btn-danger">Yes, Cancel Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Orders Section -->
+<section class="cart-section py-5 mt-5">
+    <div class="container">
+        <h3 class="text-center mb-4 fw-bold display-5 text-uppercase" data-aos="fade-up">
+            <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+                <i class="bi bi-card-checklist me-2"></i> My Orders
+            </span>
+        </h3>
+
+        <!-- Tabs -->
+        <ul class="nav nav-pills mb-3 justify-content-center" id="order-status-tabs" role="tablist" data-aos="fade-up">
+            <li class="nav-item" role="presentation">
+                <button onclick="getPendingOrders(this)" class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#PENDING" type="button" role="tab">Pending</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button onclick="getDeliveredOrders(this)" class="nav-link" id="delivered-tab" data-bs-toggle="pill" data-bs-target="#DELIVERED" type="button" role="tab">Delivered</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button onclick="getCancelledOrders(this)" class="nav-link" id="cancelled-tab" data-bs-toggle="pill" data-bs-target="#CANCELLED" type="button" role="tab">Cancelled</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button onclick="getOnGoingOrders(this)" class="nav-link" id="ongoing-tab" data-bs-toggle="pill" data-bs-target="#ONGOING" type="button" role="tab">Ongoing</button>
+            </li>
+        </ul>
+        
+        <div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+        <!-- Search Input -->
+        <div class="mb-4" data-aos="fade-up">
+            <input type="text" id="orderSearchInput" class="form-control" placeholder="Search orders by order number, product name, or status...">
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="order-tab-content" data-aos="fade-up">
+
+            <!-- Pending Tab -->
+            <div class="tab-pane fade show active" id="PENDING" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center" id="pendingTableId">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td th:if="${#lists.isEmpty(orderItemLists)}" colspan="7">No pending orders.</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Delivered Tab -->
+            <div class="tab-pane fade" id="DELIVERED" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center" id="deliveredTableId">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Cancelled Tab -->
+            <div class="tab-pane fade" id="CANCELLED" role="tabpanel" >
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center" id="cancelledTableId">
+                        <thead class="table-light">
+                            <tr >
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ongoing Tab -->
+            <div class="tab-pane fade" id="ONGOING" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center" id="ongoingTableId">
+                        <thead class="table-light">
+                            <tr >
+                                <th>Order #</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <a th:href="@{/customer/showWebsite}" class="btn btn-secondary w-100 mt-4" data-aos="zoom-in">Continue Shopping</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+<div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    // Search Functionality Across All Tabs
+    document.getElementById('orderSearchInput').addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        const tabs = ['PENDING', 'DELIVERED', 'CANCELLED', 'ONGOING'];
+
+        tabs.forEach(tab => {
+            const rows = document.querySelectorAll(`#${tab}TableId tbody tr`);
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    });
+</script>
+
+<script>
+    function setCancelOrderId(button) {
+        const orderId = button.getAttribute("data-id");
+        document.getElementById("cancelOrderId").value = orderId;
+    }
+</script>
+
+</body>
+</html>

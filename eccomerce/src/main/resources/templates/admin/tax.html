@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Tax')}"></head>
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+
+<!-- nav top -->
+<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+<!-- end of nav top -->
+
+<!-- sidebar -->
+<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+<!-- end sidebar -->
+
+<div class="content">
+
+  <div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+  <div class="row">
+    <!-- Add Tax Form -->
+    <div class="col-12 col-lg-5">
+      <div class="card shadow-lg border-0">
+        <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+          <h5 class="mb-0">Add New Tax</h5>
+        </div>
+        <div class="card-body">
+          <form th:object="${tax}" th:action="@{/admin/saveTax}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{id}">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Tax Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" th:field="*{taxName}" placeholder="Enter Tax Name" required />
+               <div class="invalid-feedback">Tax is required.</div>
+              
+            </div>
+            <div class="d-flex justify-content-start gap-2">
+              <button type="submit" class="btn btn-success px-3 py-1">
+                <i class="bi bi-check-circle me-1"></i> Save
+              </button>
+              <button type="reset" class="btn btn-secondary px-3 py-1">
+                <i class="bi bi-x-circle me-1"></i> Reset
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax List Table -->
+    <div class="col-12 col-lg-7">
+      <div class="card shadow-lg border-0">
+        <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+          <h5 class="mb-0">Tax List</h5>
+        </div>
+        <div class="card-body p-0 cardb">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th scope="col">S.No</th>
+                  <th scope="col">Tax Name</th>
+                  <th scope="col">Manage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="t, iterStat : ${taxList}">
+                  <td th:text="${iterStat.index + 1}"></td>
+                  <td th:text="${t.taxName}"></td>
+                  <td>
+                    <!-- Update Button -->
+                    <a th:href="@{updateTax(id=${t.id})}"
+                       class="btn btn-sm btn-outline-success"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Tax">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <!-- Delete Button -->
+                    <a th:href="@{deleteTax(id=${t.id})}"
+                       class="btn btn-sm btn-outline-danger"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Tax"
+                       onclick="return confirm('Are you sure you want to delete this tax?');">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(taxList)}">
+                  <td colspan="3" class="text-center text-muted py-3">No tax records available.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+</body>
+</html>

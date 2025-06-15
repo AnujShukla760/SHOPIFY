@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('Order Details - ShopY')}">
+    <style>
+        /* Professional card border & header styling */
+        .card.border-primary {
+            border-width: 1.5px !important;
+            border-radius: 0.5rem !important;
+        }
+
+        .card-header {
+            background-color: #e7f1ff;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            font-size: 1.25rem;
+            color: #0d6efd;
+            font-weight: 700;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Table styling */
+        .table {
+            border-collapse: separate !important;
+            border-spacing: 0 0.5rem !important;
+        }
+
+        .table thead tr th {
+            border-bottom: none !important;
+            background-color: #cfe2ff;
+            color: #084298;
+            border-radius: 0.25rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .table tbody tr td {
+            vertical-align: middle;
+            border: none !important;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* Badge tweaks */
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.45em 0.75em;
+            vertical-align: middle;
+        }
+
+        /* Image styling */
+        .img-thumbnail {
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+        /* Back button styling */
+        .btn-outline-primary {
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-width: 2px;
+            padding: 0.6rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 12px rgb(13 110 253 / 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<section class="py-5 mt-5">
+    <div class="container" data-aos="fade-up">
+
+        <h3 class="text-center mb-5 fw-bold display-5 text-uppercase" data-aos="fade-up">
+            <span class="px-4 py-2 border-bottom border-4 border-primary d-inline-block">
+                <i class="bi bi-card-checklist me-3"></i> Order Details
+            </span>
+        </h3>
+
+        <!-- Order Summary & Shipping Address in two columns -->
+        <div class="row g-4 mb-5">
+            <!-- Order Summary -->
+            <div class="col-lg-6">
+                <div class="card shadow-lg h-100 rounded-3">
+                    <h5 class="card-header">
+                        <i class="bi bi-receipt-cutoff me-2"></i> Order Summary
+                    </h5>
+                    <div class="card-body">
+                        <p><strong>Order ID:</strong> <span th:text="${order.id}" class="text-secondary"></span></p>
+                        <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDateTime, 'dd MMM yyyy HH:mm')}" class="text-secondary"></span></p>
+                        <p>
+                            <strong>Status:</strong> 
+                            <span th:text="${order.orderStatus}"
+                                  th:classappend="${order.orderStatus.name() == 'PENDING' ? 'badge bg-warning' : 
+                                                  (order.orderStatus.name() == 'DELIVERED' ? 'badge bg-success' : 
+                                                  (order.orderStatus.name() == 'CANCELLED' ? 'badge bg-danger' : 'badge bg-info'))}">
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Payment Mode:</strong> 
+                            <span th:text="${order.paymentMode}"
+                                  th:classappend="${order.paymentMode.equals('COD') ? 'badge bg-secondary' : 'badge bg-primary'}">
+                            </span>
+                        </p>
+                        <p><strong>Total Price:</strong> <span class="fs-5 text-success fw-bold">₹<span th:text="${order.totalPrice}"></span></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="col-lg-6">
+                <div class="card shadow-lg h-100 ">
+                    <h5 class="card-header">
+                        <i class="bi bi-geo-alt-fill me-2"></i> Shipping Address
+                    </h5>
+                    <div class="card-body">
+                        <p><i class="bi bi-person-fill me-2 text-primary"></i> <strong>Name:</strong> <span th:text="${order.users.fullName}" class="text-secondary"></span></p>
+                        <p><i class="bi bi-envelope-fill me-2 text-primary"></i> <strong>Email:</strong> <span th:text="${order.addressEmbeddable.email}" class="text-secondary"></span></p>
+                        <p><i class="bi bi-telephone-fill me-2 text-primary"></i> <strong>Phone:</strong> <span th:text="${order.addressEmbeddable.mobileNo}" class="text-secondary"></span></p>
+                        <p><i class="bi bi-building me-2 text-primary"></i> <strong>City:</strong> <span th:text="${order.addressEmbeddable.city}" class="text-secondary"></span></p>
+                        <p><i class="bi bi-geo me-2 text-primary"></i> <strong>District:</strong> <span th:text="${order.addressEmbeddable.district.districtName}" class="text-secondary"></span></p>
+                        <p><i class="bi bi-mailbox me-2 text-primary"></i> <strong>Pincode:</strong> <span th:text="${order.addressEmbeddable.pincode}" class="text-secondary"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ordered Products -->
+        <div class="card shadow-lg  mb-5">
+            <h5 class="card-header">
+                <i class="bi bi-box-seam me-2"></i> Ordered Products
+            </h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle text-center">
+                        <thead class=" ">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total Price (Excl. Tax)</th>
+                                <th>Total Tax 
+                                    <i class="bi bi-info-circle-fill " data-bs-toggle="tooltip" data-bs-placement="top" title="Calculated as (Price × Quantity × Tax %)"></i>
+                                </th>
+                                <th>Total Price (Incl. Tax)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${order.orderItemLists}">
+                                <td><span th:text="${itemStat.index + 1}"></span></td>
+                                <td th:text="${item.product.productname}" class="fw-semibold text-start"></td>
+                                <td>
+                                    <img th:src="@{/admin/public/showProductImage(imageId=${item.product.productImages[0].id})}"
+                                         alt="Product Image" class="img-thumbnail rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                </td>
+                                <td th:text="${item.quantity}"></td>
+                                <td>₹<span th:text="${item.product.mrp}"></span></td>
+                                <td>₹<span th:text="${item.product.mrp * item.quantity}"></span></td>
+                                <td>₹<span th:text="${(item.product.mrp * item.quantity) * item.product.taxPercentage.taxPercentage / 100}"></span></td>
+                                <td>₹<span th:text="${((item.product.mrp * item.quantity) * item.product.taxPercentage.taxPercentage / 100) + item.product.mrp * item.quantity}"></span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" class="text-end fw-bold fs-5">Grand Total:</td>
+                                <td class="text-success fw-bold fs-5">₹<span th:text="${order.totalPrice}"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center">
+            <a th:href="@{/customer/customerOrder}" class="btn btn-lg btn-outline-primary px-5 shadow-sm">
+                <i class="bi bi-arrow-left-circle me-2"></i> Back to Orders
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    // Enable Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+
+</body>
+</html>

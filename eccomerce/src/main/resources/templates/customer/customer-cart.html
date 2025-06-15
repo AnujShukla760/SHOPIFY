@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('Your Cart - ShopY')}"></head>
+
+<body>
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+    <!-- Cart Section -->
+    <section class="cart-section py-5 mt-5">
+        <div class="container">
+            <h3 class="text-center mb-5 fw-bold position-relative display-5 text-uppercase" data-aos="fade-up">
+                <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+                        <i class="bi bi-cart3 me-2"></i> Your Shopping Cart
+
+                </span>
+            </h3>
+            <div class="row">
+                <!-- Cart Items Column -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow-lg" data-aos="fade-right">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Cart Items</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Show if empty -->
+                            <div th:if="${#lists.isEmpty(shoppingCartLists)}" class="text-center py-5">
+                                <p class="text-danger fs-5">🛒 Buddy Your cart is empty.</p>
+                            </div>
+
+                            <!-- Cart Item -->
+                            <div class="d-flex align-items-center border-bottom py-3 " th:each="s : ${shoppingCartLists}">
+                                <img th:src="@{/admin/public/showProductImage(imageId=${s.product.id})}" alt="Product Image" class="img-fluid me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1" th:text="${s.product.productname}">Product Name</h5>
+                                    <p class="text-muted mb-1" th:text="${s.product.modelNo}">Model No</p>
+                                    <div class="d-flex align-items-center">
+                                        <label class="me-2">Qty:</label>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="javascript:void(0);" class="text-decoration-none text-dark fs-5" th:onclick="'decreaseQty(this,' + ${s.product.id} + ');'">
+                                                <i class="fas fa-minus-circle"></i>
+                                            </a>
+
+                                            <input th:id="'quantity' + ${s.product.id}" type="text" readonly 
+                                            class="form-control text-center qty-input shadow-lg"
+                                                   th:value="${s.quantity}" min="1" style="width: 90px;">
+
+                                            <a href="javascript:void(0);" class="text-decoration-none text-dark fs-5"
+											   th:onclick="'addItemsToCart(' + ${s.product.id} + ', 1);'">
+											    <i class="fas fa-plus-circle"></i>
+											</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <p class="mb-1" th:id="'mrp' + ${s.product.id}">
+                                        <span th:id="'qtyText' + ${s.product.id}" th:text="${s.quantity}">1</span>
+                                        × ₹<span th:id="'unitPrice' + ${s.product.id}" th:text="${s.product.mrp}">0</span>
+                                        = ₹<span th:id="'totalPrice' + ${s.product.id}" th:text="${s.quantity * s.product.mrp}">0</span>
+                                    </p>
+                                    <p style="display: none;" th:id="'actualMrp' + ${s.product.id}" th:text="${+s.product.mrp}">0</p>
+                                    <p style="display: none;" th:id="'totalQuantity' + ${s.product.id}" th:text="${s.product.quantity}">0</p>
+                                   <p style="display:none;" th:id="'taxRate' + ${s.product.id}" th:text="${s.product.taxPercentage.taxPercentage}">0</p>
+                                   
+                                    <a style="cursor: pointer;" th:onclick="'if(confirm(\'Are you sure you want to remove this product from the cart?\')) removeItemFromCart(' + ${s.product.id} + ')'" class="text-danger">
+                                        <i class="fas fa-trash-alt"></i> Remove
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow-lg" data-aos="fade-left">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0">Order Summary</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between py-2">
+                                <span>Subtotal :</span>
+                                <span th:text="${'₹ ' + totalCartPrice}" id="subtotalAmount">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 ">
+                                <span>Tax Amount :</span>
+                                <span id="taxAmount" th:text="${'₹ ' + totalTaxPrice}">₹0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 border-top">
+                                <strong>Grand Total : </strong>
+                                <strong id="grandTotal" th:text="${'₹ '+totalMrpWithTax}">₹0.00</strong>
+                            </div>
+                            <a th:unless="${#lists.isEmpty(shoppingCartLists)}" th:href="@{customerCheckOut}" class="btn btn-primary w-100 mt-2" data-aos="zoom-in">Proceed to Checkout</a>
+                            <a th:href="@{/customer/showWebsite}" class="btn btn-secondary w-100 mt-2" data-aos="zoom-in">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+    <!-- Common JS -->
+    <div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+
+    <!-- Toast & AOS -->
+    <div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        function increaseQty(anchor, productId) {
+            const mainProductQuantity = parseFloat($("#totalQuantity" + productId).html());
+            const selectedProductQuantity = parseFloat($("#quantity" + productId).val());
+
+            if (selectedProductQuantity >= mainProductQuantity) {
+                showToast(`😕 Sorry, only ${mainProductQuantity} unit(s) of this product are available.`);
+                return false;
+            }
+
+            const input = $("#quantity" + productId);
+            input.val(selectedProductQuantity + 1);
+
+            const actualMrp = parseFloat($("#actualMrp" + productId).html());
+            const quantity = parseInt(input.val());
+            const newPrice = quantity * actualMrp;
+
+            $("#mrp" + productId).html(
+                quantity + " × ₹" + actualMrp.toFixed(1) + " = ₹" + newPrice.toFixed(1)
+            );
+
+            updatedGrandTotal();
+        }
+
+
+
+        function decreaseQty(anchor, productId) {
+            const input = anchor.parentElement.querySelector('.qty-input');
+            let quantity = parseInt(input.value);
+            if (quantity > 1) {
+                input.value = quantity - 1;
+
+                const actualMrp = parseFloat($("#actualMrp" + productId).html());
+                const newQty = quantity - 1;
+                const newPrice = newQty * actualMrp;
+
+                $("#mrp" + productId).html(
+                	    newQty + " × ₹" + actualMrp.toFixed(1) + " = ₹" + newPrice.toFixed(1)
+                	);
+
+                removeQuantityToCart(productId, 1);
+                updatedGrandTotal();
+            }
+        }
+
+        function updatedGrandTotal() {
+            let subtotal = 0;
+            let totalTax = 0;
+            
+            $("[id^='actualMrp']").each(function () {
+                const productId = $(this).attr("id").replace("actualMrp", "");
+                const quantity = parseInt($("#quantity" + productId).val());
+                const price = parseFloat($(this).html());
+
+                const productTaxRate = parseFloat($("#taxRate" + productId).html()); 
+                
+                const itemTotal = quantity * price;
+                const itemTax = itemTotal * (productTaxRate / 100);
+                
+                subtotal += itemTotal;
+                totalTax += itemTax;
+            });
+            
+            const grandTotal = subtotal + totalTax;
+            
+            $("#subtotalAmount").text("₹ " + subtotal.toFixed(1));
+            $("#taxAmount").text("₹ " + totalTax.toFixed(1));
+            $("#grandTotal").text("₹ " + grandTotal.toFixed(1));
+        }
+
+
+        function removeItemFromCart(productId) {
+            $.ajax({
+                type: "GET",
+                url: "removeItemfromCart",
+                data: { productId },
+                success: function () {
+                    showToast("Product removed from cart successfully", 'danger');
+                    window.location.reload();
+                },
+                error: function (res) {
+                    console.error("Error removing item:", res);
+                }
+            });
+        }
+
+        function addItemsToCart(productId, quantity) {
+            const mainProductQuantity = parseFloat($("#totalQuantity" + productId).html());
+            const selectedProductQuantity = parseFloat($("#quantity" + productId).val());
+
+            if(selectedProductQuantity >= 10){
+            	showToast(`🙁 Sorry, you can’t order more than 10 units of this product.`);
+                return false;
+            }
+            
+            if (selectedProductQuantity >= mainProductQuantity) {
+                showToast(`😕 Sorry, only ${mainProductQuantity} unit(s) of this product are available.`);
+                return false;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/pisoft/shoppingCart/addItemsToCart",
+                data: { productId, quantity },
+                success: function (response) {
+                    $("#cartId").html(response);
+                    increaseQty(null, productId); // Only increase in UI after backend success
+                    showToast("Product added to cart successfully", 'success');
+                },
+                error: function () {
+                    // handle error
+                }
+            });
+        }
+
+
+        function removeQuantityToCart(productId, quantity) {
+            $.ajax({
+                type: "POST",
+                url: "/pisoft/shoppingCart/removeQuantityToCart",
+                data: { productId, quantity },
+                success: function (response) {
+                    $("#cartId").html(response);
+                    showToast("Product quantity removed", 'primary');
+                },
+                error: function () {
+                    // handle error
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Purchase Details')}"></head>
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+<!-- Navigation -->
+<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+
+<div class="content">
+	<div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+	<div class="container py-4">
+
+		<!-- Purchase Header -->
+		<div class="card shadow-lg border border-2 rounded-4 mb-4">
+			<div class="card-header text-white d-flex justify-content-between align-items-center cards">
+				<h5 class="mb-0">Purchase Overview</h5>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<!-- Bill Image -->
+					<div class="col-lg-4">
+						<div class="border border-2 p-2 bg-light rounded-3">
+							<!-- <div th:if="${purchase.billImage != null}">
+								<img th:src="@{/admin/showBillImage(purchaseId=${purchase.id})}"
+									 class="img-fluid rounded-3 border border-secondary"
+									 alt="Bill Image" />
+							</div>
+							<div th:if="${purchase.billImage == null}">
+								<img src="/img/fallback.png" class="img-fluid rounded-3 border border-secondary"
+									 alt="No Bill Available" />
+							</div> -->
+						</div>
+					</div>
+
+					<!-- Purchase Info -->
+					<div class="col-lg-8 shadow-lg">
+						<table class="table table-sm table-borderless">
+							<tr><th>Bill No:</th><td th:text="${purchase.billNo}">BILL12345</td></tr>
+							<tr><th>Vendor:</th><td th:text="${purchase.vendorName}">ABC Traders</td></tr>
+							<tr><th>Date & Time:</th><td th:text="${#temporals.format(purchase.purchaseDateAndTime, 'dd-MM-yyyy h:mm a')}">22-05-2025 5:29 PM</td></tr>
+							<tr><th>Total Price:</th><td>₹<span th:text="${purchase.totalPrice}">20000</span></td></tr>
+							<tr><th>Payment Mode:</th><td th:text="${purchase.paymentMode}">CASH</td></tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+				<!-- Vendor Address -->
+				<div class="card shadow-lg border mb-4" th:if="${purchase.addressEmbeddable != null}">
+				    <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+				        <h5 class="mb-0">Vendor Address</h5>
+				    </div>
+				    <div class="card-body">
+				        <div class="row">
+				            <!-- Vendor Image -->
+				            <span style="font-weight: bold;">Vendor Image
+				              <i class="bi bi-person-circle"></i>
+				            </span>
+				            <div class="col-lg-4 mb-3">
+				            
+				                <img th:src="@{/admin/showVendorImage(id=${purchase.id})}"
+				                     class="card-img-top img-fluid rounded border border-secondary"
+				                     alt="Vendor Image"
+				                     style="max-height: 250px;" />
+				            </div>
+				
+				            <!-- Vendor Address Details -->
+				            <div class="col-lg-8">
+				                <div class="row">
+				                    <!-- Left Column -->
+				                    <div class="col-md-6">
+				                        <p><strong>Landmark:</strong> <span th:text="${purchase.addressEmbeddable.landMark}">Landmark</span></p>
+				                        <p><strong>City:</strong> <span th:text="${purchase.addressEmbeddable.city}">City</span></p>
+				                        <p><strong>District:</strong> <span th:text="${purchase.addressEmbeddable.district.districtName}">District</span></p>
+				                    </div>
+				
+				                    <!-- Right Column -->
+				                    <div class="col-md-6">
+				                        <p><strong>Pincode:</strong> <span th:text="${purchase.addressEmbeddable.pincode}">123456</span></p>
+				                        <p><strong>Email:</strong> <span th:text="${purchase.addressEmbeddable.email}">vendor@example.com</span></p>
+				                        <p><strong>Mobile No:</strong> <span th:text="${purchase.addressEmbeddable.mobileNo}">9876543210</span></p>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+
+
+
+		<!-- Purchase Items Table -->
+		<div class="card shadow-lg border mb-4">
+			<div class="card-header text-white d-flex justify-content-between align-items-center cards">
+				<h5 class="mb-0">Purchase Items</h5>
+			</div>
+			<div class="card-body table-responsive">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Product Name</th>
+							<th>Quantity</th>
+							<th>Cost/Unit</th>
+							<th>Tax %</th>
+							<th>Tax Amount</th>
+							<th>Total (Without Tax)</th>
+							<th>Total (With Tax)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="item, stat : ${purchase.purchaseItems}">
+							<td th:text="${stat.index + 1}">1</td>
+							<td th:text="${item.product.productname}">Product A</td>
+							<td th:text="${item.quantity}">10</td>
+							<td>₹<span th:text="${item.costPricePerUnit}">1000</span></td>
+							<td><span th:text="${item.taxPercentage.taxPercentage + '%'}">18%</span></td>
+							<td>₹<span th:text="${item.taxAmount}">1800</span></td>
+							<td>₹<span th:text="${item.totalPriceBeforeTax}">10000</span></td>
+							<td><strong>₹<span th:text="${item.totalPriceWithTax}">11800</span></strong></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+</body>
+</html>

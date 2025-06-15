@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Order Manage')}"></head>
+<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+
+<body>
+
+	<!-- nav top -->
+	<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+	<!-- end of nav top -->
+
+	<!-- sidebar -->
+	<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+	<!-- end sidebar -->
+
+	<div class="content">
+
+		<div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+		<div class="row">
+			<div class="col-12 col-lg-12">
+			
+			
+			
+			
+			
+				<div class="card shadow-lg border-0">
+					<div class="card-header text-white d-flex justify-content-between align-items-center cards">
+						<h5 class="mb-0">Order List</h5>
+					</div>
+					
+					<div class="p-3">
+			    <input type="text" id="orderSearchInput" class="form-control" placeholder="Search by customer name or status..." />
+			</div>
+
+					<div class="card-body p-0 cardb">
+						<div class="table-responsive">
+						
+						<p th:if="${#lists.isEmpty(orders)}" class="text-danger text-center mt-3">
+						    No orders found.
+						</p>
+						
+						
+						
+							<table id="tableId" class="table table-bordered table-hover align-middle mb-0">
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th>Customer</th>
+										<th>Items</th>
+										<th>Total Price</th>
+										<th>Status</th>
+										<th>Change Status</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<tr th:each="order, stat : ${orders}">
+										<td th:text="${stat.index + 1}">1</td>
+										<td th:text="${order.users.fullName}">John Doe</td>
+										<td>
+											<ul class="mb-0">
+												<li th:each="item : ${order.orderItemLists}" class="small">
+													<span th:text="${item.product.productname} + ' x' + item.quantity">Product x2</span>
+												</li>
+											</ul>
+										</td>
+										<td>
+											<span class="badge bg-success" th:text="'₹' + ${order.totalPrice}">₹1234</span>
+										</td>
+										<td>
+											<span class="badge"
+												th:classappend="
+													${order.orderStatus.name()} == 'PENDING' ? 'bg-warning' :
+													(${order.orderStatus.name()} == 'ONGOING' ? 'bg-primary' :
+													(${order.orderStatus.name()} == 'DELIVERED' ? 'bg-success' : 'bg-danger'))"
+												th:text="${order.orderStatus.name()}">pending</span>
+										</td>
+										<td>
+											<form th:action="@{/admin/updateOrderStatus}" method="post" 
+											class="d-flex align-items-center gap-2 needs-validation" novalidate>
+											  <input type="hidden" name="orderId" th:value="${order.id}" />
+											
+											  <select required="required" class="form-select form-select-sm" name="newStatus" style="max-width: 150px;">
+											  <option value="">Select Status</option>
+											  <option th:each="status : ${T(com.ecommerce.eccomerce.enums.OrderStatus).values()}"
+											          th:if="${status.name() != 'PENDING'}"
+											          th:value="${status}"
+											          th:text="${status}">
+											  </option>
+											</select>
+											<span class="invalid-feedback">
+										     required
+										    </span>
+											
+
+											
+											  <textarea name="statusChangeReason" placeholder="Reason (optional)" class="form-control form-control-sm" style="max-width: 200px;"></textarea>
+											  <button type="submit" class="btn btn-sm btn-outline-primary ms-2">Update</button>
+											</form>
+
+										</td>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+	<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+	
+	<script>
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    forms.forEach(form => {
+      form.addEventListener('submit', e => {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("orderSearchInput");
+    const tableRows = document.querySelectorAll("#tableId tbody tr");
+
+    searchInput.addEventListener("keyup", function () {
+        const searchTerm = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const customer = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase();
+            const status = row.querySelector("td:nth-child(5) span")?.textContent.toLowerCase();
+            
+            const matches = customer.includes(searchTerm) || status.includes(searchTerm);
+            row.style.display = matches ? "" : "none";
+        });
+    });
+});
+</script>
+
+
+	
+	
+</body>
+</html>

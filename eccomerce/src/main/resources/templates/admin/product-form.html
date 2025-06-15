@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Add Product')}"></head>
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+
+<!-- nav top -->
+<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+
+<!-- sidebar -->
+<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+
+<div class="content">
+
+	<div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+  <div class="row">
+  <form  th:object="${product}" th:action="@{/admin/saveProduct}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+ 
+ <input type="hidden" th:field="*{id}">
+ 
+    <div class="col-12 col-lg-12 mx-auto">
+      <div class="card shadow-lg border-0">
+        <div class="card-header text-white cards">
+          <h5 class="mb-0">Add Product</h5>
+        </div>
+        <div class="card-body mainbody">
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="row">
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Product Name <span class="text-danger">*</span></label>
+			    <input type="text" class="form-control" th:field="*{productname}" placeholder="Enter product name" required />
+			    <div class="invalid-feedback">Product name is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">HSN Code</label>
+			    <input class="form-control" th:field="*{hsnCode}" placeholder="Enter HSN code" />
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Bar Code</label>
+			    <input class="form-control" th:field="*{barCode}" placeholder="Enter barcode" />
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Model No</label>
+			    <input type="text" class="form-control" th:field="*{modelNo}" placeholder="Enter model number" />
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Serial No</label>
+			    <input type="text" class="form-control" th:field="*{serialNo}" placeholder="Enter serial number" />
+			  </div>
+			  
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Brand</label>
+			    <select class="form-select" th:field="*{brand.id}" required>
+			      <option value="">Select Brand</option>
+			      <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.brandName}"></option>
+			    </select>
+			    <div class="invalid-feedback">Brand is required.</div>
+			  </div>
+			
+			  <div class="col-lg-12 mb-3">
+			    <label class="form-label">Description</label>
+			    <textarea class="form-control shadow-sm" th:field="*{description}" rows="3" placeholder="Enter product description" required></textarea>
+			    <div class="invalid-feedback">Description is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Quantity</label>
+			    <input type="number" class="form-control" th:field="*{quantity}" min="0" placeholder="Enter quantity" required />
+			    <div class="invalid-feedback">Quantity is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Minimum Stock</label>
+			    <input type="number" class="form-control" th:field="*{minimumStock}" min="0" placeholder="Enter minimum stock" required />
+			    <div class="invalid-feedback">Minimum stock is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Cost Price</label>
+			    <input type="number" class="form-control" th:field="*{costPrice}" step="0.01" placeholder="Enter cost price" required />
+			    <div class="invalid-feedback">Cost price is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">MRP</label>
+			    <input type="number" class="form-control" th:field="*{mrp}" step="0.01" placeholder="Enter MRP" required />
+			    <div class="invalid-feedback">MRP is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Tax Percentage</label>
+			    <select class="form-select" th:field="*{taxPercentage.id}" required>
+			      <option value="">Select Tax</option>
+			      <option th:each="tax : ${taxPercentage}" th:value="${tax.id}" th:text="${tax.taxPercentage + '%'}"></option>
+			    </select>
+			    <div class="invalid-feedback">Tax percentage is required.</div>
+			  </div>
+			
+			  <div class="col-lg-6 mb-3">
+			    <label class="form-label">Product Subcategory</label>
+			    <select class="form-select" th:field="*{productSubCategory.id}" required>
+			      <option value="">Select Subcategory</option>
+			      <option th:each="sub : ${productSubCatList}" th:value="${sub.id}" th:text="${sub.subCategoryName}"></option>
+			    </select>
+			    <div class="invalid-feedback">Product subcategory is required.</div>
+			  </div>
+			</div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="mt-4">
+	 <div class="card shadow-sm border-0 ">
+			<div
+				class="card-header text-white d-flex justify-content-between align-items-center cards">
+				<h5 class="mb-0">Add Product Images</h5>
+			</div>
+		</div>
+	  
+	  <table class="table table-bordered " >
+	  <thead>
+	    <tr>
+	      <th>S.No</th>
+	      <th>document</th>
+	      <th>image</th>
+	    </tr>
+	  </thead>
+	  <tbody id="itemsBody">
+		  <tr th:each="a, iStat : *{productImages}">
+		    <td th:text="${iStat.index + 1}">1</td>
+		    
+		     <td style="display: none;">
+		      <input type="hidden" th:field="*{productImages[__${iStat.index}__].id}" />
+		      <input type="hidden" th:field="*{productImages[__${iStat.index}__].product.id}" />
+		    </td>
+		
+		    <td>
+		      <input type="text"
+		             th:field="*{productImages[__${iStat.index}__].document}"
+		             class="form-control"
+		             required
+		             placeholder="Document name"/>
+		      <div class="invalid-feedback">Document is required.</div>
+		    </td>
+		
+		    <td>
+		      <input type="file"
+		             th:field="*{productImages[__${iStat.index}__].file}"
+		             class="form-control"
+		             accept=".jpg,.jpeg,.png"/>
+			    </td>
+			  </tr>
+			</tbody>
+		</table>
+
+  
+  		<div style="text-align: center;">
+	        <a  class="anchor " id="add">
+			  <i class="fa-solid fa-circle-plus fa-2x"></i>
+			</a>
+			
+			<a class="anchor" id="remove">
+			  <i class="fa-solid fa-circle-minus fa-2x"></i>
+			</a>
+
+        </div>
+  
+</div>
+
+<div class="d-flex justify-content-start gap-2">
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Save
+              </button>
+              <button type="reset" class="btn btn-secondary">
+                <i class="bi bi-x-circle me-1"></i> Reset
+              </button>
+            </div>
+          </form>
+
+
+  </div>
+</div>
+
+<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+    let index = $("#itemsBody tr").length; 
+    const maxFields = 5;
+
+    // Function to add a new row
+    $("#add").click(function () {
+        const tableBody = $("#itemsBody");
+
+        if (index < maxFields) {
+            const newRowHTML = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                    
+                    	<input type="text" name="productImages[${index}].document" class="form-control" required placeholder="Document name">
+      		      		<div class="invalid-feedback">Document is required.</div>
+
+                    </td>
+                    <td>
+                        <input type="file" name="productImages[${index}].file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </td>
+                </tr>
+            `;
+            tableBody.append(newRowHTML);
+            index++;
+        } else {
+        	showToast("Warning! You can't add more than " + maxFields + " rows." , "warning");
+        }
+    });
+
+    // Function to remove the last row
+    $("#remove").click(function () {
+        const tableBody = $("#itemsBody");
+        const rows = tableBody.find("tr");
+
+        if (rows.length > 1) {
+            rows.last().remove();
+            index--;
+        } else {
+        	showToast("No more extra rows to remove.");
+        }
+    });
+});
+</script>
+<div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+</body>
+</html>

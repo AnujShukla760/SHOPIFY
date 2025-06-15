@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="~{fragments/head :: commonHead('Login - ERP System')}"></head>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+<body>
+  <div id="particles-js"></div>
+
+  <div id="imgs" class="text-center mb-4">
+    <img th:src="@{/img/sho.png}" alt="Logo" />
+  </div>
+
+  <!-- Flash message -->
+  <div th:if="${warning}" class="alert alert-danger" th:text="${warning}"></div>
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+  <form onsubmit="return formSubmitValidation(event)" th:action="@{/users/checkUserLogin}" th:object="${users}" method="post">
+    <div class="mb-3">
+      <label for="inputEmail" class="form-label">Email address</label>
+      <input type="email" th:field="*{addressEmbeddable.email}" class="form-control" id="email" placeholder="Enter your email"  />
+      <span id="error-email"></span>
+    </div>
+
+    <div class="mb-3">
+      <label for="inputPassword" class="form-label">Password</label>
+      <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Enter your password"  />
+      <span id="error-password"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Login</button>
+  </form>
+  
+   <!-- Forgot Password Link -->
+  <div class="mt-2 text-end">
+    <a th:href="@{/users/forgetPassword}" class="small">Forgot Password?</a>
+  </div>
+  
+
+  <div class="text-center mt-3">
+    <small>Don't have an account? <a th:href="@{/users/userRegister}">Register here</a></small>
+  </div>
+
+  <div th:replace="~{fragments/scripts :: commonScripts}"></div>
+
+  <script th:src="@{/js/particles.js}"></script>
+  <script th:src="@{/js/login.js}"></script>
+</body>
+</html>

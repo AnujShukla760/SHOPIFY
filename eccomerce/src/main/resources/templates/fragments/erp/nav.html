@@ -1,0 +1,45 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="topbar" th:fragment="navFragment">
+  <div class="d-flex align-items-center w-100 px-3 position-relative">
+
+    <!-- Sidebar Toggle Button -->
+    <button class="btn btn-outline-light d-md-none me-2" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Marquee - Centered absolutely -->
+    <div class="text-white position-absolute start-50 translate-middle-x fw-bold zoom-hover">
+	  Welcome to ShopY ERP System - Empowering Your Business!
+	</div>
+
+
+    <!-- Date-Time -->
+    <div id="dateTime" class="d-none d-md-block ms-auto me-4"></div>
+
+    <!-- User Dropdown -->
+    <div class="dropdown me-2 d-flex align-items-center">
+      <a class="text-white dropdown-toggle text-decoration-none d-flex align-items-center" 
+       role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+
+        <!-- User Image -->
+        <img th:if="${loggedUser != null}" 
+             th:src="@{/img/justin.jpg}" 
+             alt="User Image" 
+             class="rounded-circle me-2" 
+             style="width:32px; height:32px; object-fit:cover;"/>
+
+        <!-- User Name -->
+        <span th:if="${loggedUser != null}" th:text="${loggedUser.fullName}">John Doe</span>
+      </a>
+
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li><a class="dropdown-item" href="/users/profile">Profile</a></li>
+        <li><a class="dropdown-item" th:href="@{/users/logout}">Logout</a></li>
+      </ul> 
+    </div>
+  </div>
+</nav>
+
+
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('Checkout - ShopY')}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checkout - ShopY</title>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<!-- Checkout Section -->
+	<section class="py-5 mt-5">
+	    <div class="container">
+	        <h3 class="text-center mb-5 fw-bold position-relative display-5 text-uppercase" data-aos="fade-up">
+			    <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+			            <i class="bi bi-credit-card-2-front me-2"></i> Checkout
+
+			    </span>
+			</h3>
+
+        <div class="row">
+            <!-- Billing & Shipping Form -->
+            <div class="col-lg-7 mb-4">
+                <div class="card shadow-lg" data-aos="fade-right">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Billing & Shipping Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:object="${orders}" th:action="@{/customer/saveOrders}" method="post" class="needs-validation" novalidate>
+                            <!-- Full Name & Email -->
+                            <div class="row mb-3">
+                                
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" th:field="*{addressEmbeddable.email}" class="form-control" id="email" placeholder="john@example.com" required />
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel"th:field="*{addressEmbeddable.mobileNo}" class="form-control" id="phone" placeholder="+91 98765 43210" required />
+                                </div>
+                            </div>
+
+                            <!-- Phone & Address -->
+                            <div class="row mb-3">
+                                
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" th:field="*{addressEmbeddable.landMark}" id="address" rows="2" placeholder="123, Main Street, City, State" required></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" th:field="*{addressEmbeddable.city}"  id="city" placeholder="Mumbai" required />
+                                </div>
+                                
+                            </div>
+
+                            <!-- City & State -->
+                            <div class="row mb-3">
+                            
+                            <div class="col-md-6">
+                                    <label for="postalCode" class="form-label">Postal Code</label>
+                                    <input type="text" class="form-control" th:field="*{addressEmbeddable.pincode}" id="postalCode" placeholder="400001" required />
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="state" class="form-label">District</label>
+                                    <select class="form-select" th:field="*{addressEmbeddable.district.id}" required>
+					                  <option value="">Select District</option>
+					                  <option th:each="d : ${districtList}"
+					                          th:value="${d.id}"
+					                          th:text="${d.districtName}">
+					                  </option>
+					                </select>
+                                </div>
+                            </div>
+
+
+                            <!-- Payment Method -->
+                            <h5 class="mb-3">Payment Method</h5>
+                            <div class="mb-3">
+                                <div class="form-check" th:each=" p : ${paymentModeList}">
+                                    <input required="required" class="form-check-input" th:field="*{paymentMode}" th:value="${p}" type="radio" name="paymentMethod" id="cod" value="cod" />
+                                    <label class="form-check-label" for="cod" th:text="${p}" >Cash on Delivery</label>
+                                </div>
+                            </div>
+
+
+                            <button type="submit" class="btn btn-success w-100" data-aos="zoom-in">Place Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5 mb-4">
+                <div class="card shadow-lg" data-aos="fade-left">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group mb-3">
+                            
+                            <li class="list-group-item d-flex justify-content-between align-items-center" th:each="s , iStat : ${shoppingCartLists}">
+								<span class="" th:text="${iStat.index+1}"></span>
+								<span class="badge bg-primary" th:text="${s.product.productname}"></span>
+                                <span th:text="${('₹'+s.product.mrp * s.quantity)   + ' (' +s.quantity + ' x ' + '₹'+s.product.mrp+')'}"></span>
+                                <!-- <span>₹119.98 (2 × ₹59.99)</span> -->
+                            </li>
+                            
+                            <!-- <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Smart Watch
+                                <span>₹129.99 (1 × ₹129.99)</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                USB-C Cable
+                                <span>₹29.97 (3 × ₹9.99)</span>
+                            </li> -->
+                        </ul>
+                        <div class="d-flex justify-content-between py-2">
+                            <span>Subtotal</span>
+                            <span th:text="${'₹'+subTotal}">₹279.94</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span>Tax</span>
+                            <span th:text="${'₹'+totalTaxPrice}">₹13.99</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 border-top">
+                            <strong>Total</strong>
+                            <strong th:text="${'₹'+totalMrpWithTax}">₹293.93</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+
+<!-- Scripts -->
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+
+<!-- AOS Initialization & Payment Method Toggle -->
+<script>
+    AOS.init({ duration: 800, once: true });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const creditCardRadio = document.getElementById('creditCard');
+        const cardDetails = document.getElementById('cardDetails');
+
+        function toggleCardDetails() {
+            cardDetails.style.display = creditCardRadio.checked ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('input[name="paymentMethod"]').forEach((el) =>
+            el.addEventListener('change', toggleCardDetails)
+        );
+
+        toggleCardDetails(); // initial setup
+    });
+    
+    (() => {
+	    'use strict';
+	    const forms = document.querySelectorAll('.needs-validation');
+	    Array.from(forms).forEach(form => {
+	      form.addEventListener('submit', event => {
+	        if (!form.checkValidity()) {
+	          event.preventDefault();
+	          event.stopPropagation();
+	        }
+	        form.classList.add('was-validated');
+	      }, false);
+	    });
+	  })();
+    
+</script>
+
+<style>
+    form label {
+        font-weight: 600;
+    }
+</style>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('ERP Software')}"></head>
+
+	
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+  
+  <!-- nav top -->
+  	<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+  <!--end of nav top -->
+  
+  <!-- sidebar -->
+  	<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+  <!-- end sidebar -->
+
+  <main class="content">
+    <h2>Dashboard</h2>
+    <div class="row mb-4">
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-white bg-warning">
+          <div class="card-header d-flex align-items-center">
+            <i class="bi bi-clock-history me-2"></i> Pending Orders
+          </div>
+          <div class="card-body">
+            <h5 class="card-title" th:text="${pendingOrder}">23</h5>
+            <p class="card-text">Orders awaiting processing</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-white bg-success">
+          <div class="card-header d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2"></i> Completed Orders
+          </div>
+          <div class="card-body">
+            <h5 class="card-title" th:text="${deliveredOrder}">180</h5>
+            <p class="card-text">Orders fulfilled this month</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-white bg-primary">
+          <div class="card-header d-flex align-items-center">
+            <i class="bi bi-people-fill me-2"></i> Total Users
+          </div>
+          <div class="card-body">
+            <h5 class="card-title" th:text="${userCount}">120</h5>
+            <p class="card-text">Registered users</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-white bg-info">
+          <div class="card-header d-flex align-items-center">
+            <i class="bi bi-box-seam me-2"></i> Stock Remaining
+          </div>
+          <div class="card-body">
+            <h5 class="card-title" th:text="${remainingStockCount}">1,350</h5>
+            <p class="card-text">Items in stock</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-lg-6 mb-4 shadow-lg">
+        <h4>Monthly Overview</h4>
+        <canvas id="barChart"></canvas>
+      </div>
+      <div class="col-lg-6 mb-4 shadow-lg">
+        <h4>Order Status Distribution</h4>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <!-- common js -->
+ 	 <div th:replace="~{fragments/scripts :: commonScripts}"></div>
+  <!-- end common js -->
+  
+  <script th:inline="javascript">
+    const pendingOrders = /*[[${pendingOrder}]]*/ null;
+    const deliveredOrder = /*[[${deliveredOrder}]]*/ null;
+</script>
+  
+  
+	<script th:src="@{/js/erp/dashboard/dash.js}"></script>
+  
+</body>
+</html>

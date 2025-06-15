@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <select th:if="${state=='stateId'}" class="form-select">
+        <option value="">Select State</option>
+        <option th:each="s : ${stateList}" th:value="${s.id}" th:text="${s.stateName}"></option>
+    </select>
+    
+    <select th:if="${distict=='distictId'}" class="form-select">
+        <option value="">Select District</option>
+        <option th:each="s : ${districtList}" th:value="${s.id}" th:text="${s.districtName}"></option>
+     </select>
+
+</html>

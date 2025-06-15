@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Product Manage')}"></head>
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+
+	<!-- nav top -->
+	<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+	<!--end of nav top -->
+
+	<!-- sidebar -->
+	<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+	<!-- end sidebar -->
+
+
+
+	<div class="content">
+
+		<div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+		<div class="row">
+
+			<div class="col-12 col-lg-12">
+				<div class="card shadow-lg border-0">
+					<div
+						class="card-header  text-white d-flex justify-content-between align-items-center cards">
+						<h5 class="mb-0">Product  List</h5>
+					</div>
+					<div class="card-body p-0 cardb">
+						<div class="table-responsive">
+							<table id="tableId" class="table table-bordered table-hover align-middle mb-0">
+							  <thead>
+							    <tr>
+							      <th>S.No</th>
+							      <th width="11%;">Product Name</th>
+							      <th>Brand</th>
+							      <th>HSN Code</th>
+							      <th>Bar Code</th>
+							      <th>Model No</th>
+							      <th width="5%">Quantity</th>
+							      <th>MRP</th>
+							      <th>Tax %</th>
+							      <th>Subcategory</th>
+							      <th width="12%">Actions</th>
+							    </tr>
+							  </thead>
+							
+							  <tbody>
+							    <tr th:each="prod, stat : ${products}">
+							      <td th:text="${stat.index + 1}">1</td>
+							      <td th:text="${prod.productname}">Sample Product</td>
+							       <td>
+							        <span class="badge bg-danger	" th:text="${prod.brand.brandName}">100</span>
+							      </td>
+							      <td th:text="${prod.hsnCode}">1234</td>
+							      <td th:text="${prod.barCode}">5678</td>
+							      <td th:text="${prod.modelNo}">MN001</td>
+							      
+							      <!-- Quantity with badge -->
+							      <td>
+							        <span class="badge bg-primary" th:text="${prod.quantity}">100</span>
+							      </td>
+							      
+							      <!-- MRP with badge -->
+							      <td>
+							        <span class="badge bg-success" th:text="${'₹ '+prod.mrp}">999.99</span>
+							      </td>
+							      
+							       <td>
+							        <span class="badge bg-warning" th:text="${prod.taxPercentage.taxPercentage+ '%'}">999.99</span>
+							      </td>
+							      
+							      <td th:text="${prod.productSubCategory.subCategoryName}">Electronics</td>
+							      <td>
+							        <a th:href="@{productView(id=${prod.id})}"
+							           class="btn btn-sm btn-outline-success"
+							           data-bs-toggle="tooltip" data-bs-placement="top" title="View Product">
+							          <i class="bi bi-eye"></i>
+							        </a>
+							
+							        <a th:href="@{editProduct(id=${prod.id})}"
+							           class="btn btn-sm btn-outline-success"
+							           data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Product">
+							          <i class="bi bi-pencil-square"></i>
+							        </a>
+							
+							        <a th:href="@{deleteProduct(id=${prod.id})}"
+							           class="btn btn-sm btn-outline-danger"
+							           data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Product"
+							           onclick="return confirm('Are you sure you want to delete this Product?');">
+							          <i class="bi bi-trash"></i>
+							        </a>
+							      </td>
+							    </tr>
+							  </tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+	<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+</body>
+</html>

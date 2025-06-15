@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/website/websiteHead :: website-head('My Profile - ShopY')}"></head>
+
+<body>
+<!-- Navbar -->
+<nav th:replace="~{fragments/website/websiteNav :: website-nav}"></nav>
+
+<section class="py-5 mt-5 bg-light">
+    <div class="container">
+        <!-- Title -->
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h3 class="fw-bold display-5 text-uppercase">
+                <span class="border-bottom border-4 border-primary pb-2">
+                    <i class="bi bi-person-circle me-2"></i> My Profile
+                </span>
+            </h3>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden" data-aos="zoom-in">
+
+                    <div class="row g-0">
+                        <!-- Profile Image Section -->
+                        <div class="col-md-4 bg-primary text-white d-flex flex-column justify-content-center align-items-center p-4">
+							<img th:src="${sessionUser.addressEmbeddable.image != null} ? 
+							@{/users/public/showUserImage(id=${sessionUser.id})} : 
+							@{/img/face.jpeg}"
+							     alt="User Image"
+							     class="img-thumbnail rounded-circle"
+							     style="width: 150px; height: 150px; object-fit: cover;">
+
+
+                            <h5 class="fw-semibold text-center" th:text="${sessionUser.fullName}">John Doe</h5>
+                            <p class="mb-0 text-center">
+                                <span class="badge bg-light text-dark px-3 py-2" th:text="${sessionUser.addressEmbeddable.email}">john@example.com</span>
+                            </p>
+                        </div>
+
+                        <!-- Info Section -->
+                        <div class="col-md-8 bg-white p-4">
+                            <!-- Contact Info -->
+                            <div class="mb-4">
+                                <h5 class="mb-3 text-uppercase text-primary border-bottom pb-2">
+                                    <i class="bi bi-telephone me-2"></i>Contact Information
+                                </h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">Mobile Number</label>
+                                        <div class="badge bg-secondary-subtle text-dark fw-semibold px-3 py-2"
+                                             th:text="${sessionUser.addressEmbeddable.mobileNo}">+91 9876543210</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">Email Address</label>
+                                        <div class="badge bg-warning-subtle text-dark fw-semibold px-3 py-2"
+                                             th:text="${sessionUser.addressEmbeddable.email}">john@example.com</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Divider -->
+                            <hr class="my-4">
+
+                            <!-- Address Info -->
+                            <div class="mb-4">
+                                <h5 class="mb-3 text-uppercase text-primary border-bottom pb-2">
+                                    <i class="bi bi-geo-alt me-2"></i>Address Details
+                                </h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">City</label>
+                                        <div class="badge bg-info-subtle text-dark fw-semibold px-3 py-2"
+                                             th:text="${sessionUser.addressEmbeddable.city}">New Delhi</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">Landmark</label>
+                                        <div class="badge bg-success-subtle text-dark fw-semibold px-3 py-2"
+                                             th:text="${sessionUser.addressEmbeddable.landMark}">ABC Street</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">District</label>
+                                        <div class="badge bg-danger-subtle text-dark fw-semibold px-3 py-2"
+                                        	 th:if="${sessionUser.addressEmbeddable.district!=null}"
+                                             th:text="${sessionUser.addressEmbeddable.district.districtName}">Delhi</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-muted small">Pincode</label>
+                                        <div class="badge bg-danger-subtle text-dark fw-semibold px-3 py-2"
+                                             th:text="${sessionUser.addressEmbeddable.pincode}">110001</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="text-end mt-4">
+                                <a th:href="@{/customer/customerProfileUpdate}" class="btn btn-outline-primary px-4 py-2 rounded-pill">
+                                    <i class="bi bi-pencil-square me-2"></i>Update Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div> <!-- End Row -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+<div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+<script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

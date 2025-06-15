@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/head :: commonHead('Register - ERP System')}"></head>
+  <link rel="stylesheet" th:href="@{/css/register.css}">
+<body>
+  <div id="particles-js"></div>
+
+  <div id="imgs" class="text-center mb-4">
+    <img th:src="@{/img/sho.png}" alt="Logo" />
+  </div>
+
+  <!-- Flash messages -->
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${warning}" class="alert alert-danger" th:text="${warning}"></div>
+
+  <form onsubmit="return formSubmitValidation(event)" th:action="@{/users/saveUserRegister}" th:object="${users}" method="post">
+    <div class="mb-3">
+      <label for="fullName" class="form-label">Full Name</label>
+      <input type="text" th:field="*{fullName}" class="form-control" id="fullName" placeholder="Enter your full name"  />
+      <span id="error-name"></span>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input type="email" th:field="*{addressEmbeddable.email}" class="form-control" id="email" placeholder="Enter your email"  />
+      <span id="error-email"></span>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Create a password"  />
+      <span id="error-password"></span>
+    </div>
+
+    <div class="mb-3">
+      <label for="confirmPassword" class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password"  />
+      <span id="error-confirmPassword"></span>
+    </div>
+
+	 <div class="mb-3 form-check d-flex flex-column align-items-start">
+  <div class="d-flex align-items-center">
+    <input type="checkbox" class="form-check-input" id="rememberMe" />
+    <label class="form-check-label ms-2" for="rememberMe">
+      Read all the terms and conditions
+    </label>
+  </div>
+  <span id="error-read" style="margin-left: -1.25rem;"></span>
+</div>
+
+
+    <button type="submit" class="btn btn-success w-100">Register</button>
+  </form>
+
+  <div class="text-center mt-3">
+    <small>Already have an account? <a th:href="@{/users/userLoginForm}">Login here</a></small>
+  </div>
+
+<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+  
+	<script th:src="@{/js/particles.js}"></script>
+	<script th:src="@{/js/register.js}"></script>
+
+</body>
+</html>

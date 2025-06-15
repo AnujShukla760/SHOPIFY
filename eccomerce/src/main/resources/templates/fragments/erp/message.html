@@ -1,0 +1,8 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div class="col-lg-5 messageFont" th:fragment="messageFragment" data-aos="fade-up">
+	<div th:if="${warning}" class="alert alert-danger" th:text="${warning}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+</div>
+    
+</html>    

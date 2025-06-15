@@ -1,0 +1,51 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<table class="table table-bordered align-middle text-center">
+    <thead class="table-light">
+        <tr>
+            <th>Order #</th>
+            <th>Date</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody   th:each="ol , iStat :${orders}">
+    
+        <tr>
+	        <td th:text="${iStat.index + 1}"></td>
+	        <td th:text="${#temporals.format(ol.orderDateTime, 'dd MMM yyyy HH:mm a')}" ></td>
+	        <td th:text="${ol.paymentMode}"></td>
+	        <td th:text="${'₹ '+ol.totalPrice}"></td>
+	        <td th:text="${ol.orderStatus}"></td>
+	        
+	        <td >
+            <a th:href="@{customerOrderView(id=${ol.id})}" class="btn btn-sm btn-outline-primary mb-1">
+                View Product
+            </a>
+            <a th:if="${statusValue=='PENDING'}" href="#"  class="btn btn-sm btn-outline-danger mb-1"
+			   th:data-id="${ol.id}"
+			   data-bs-toggle="modal"
+			   data-bs-target="#cancelOrderModal"
+			   onclick="setCancelOrderId(this)">
+			   Cancel Order
+			</a>
+
+        </td>
+        
+        </tr>
+    </tbody> 
+    <tbody>
+        <tr>
+	        <td th:if="${#lists.isEmpty(orderItemLists)}" colspan="7">
+		        <span th:if="${statusValue=='pending'}">No Pending orders.</span>
+		        <span th:if="${statusValue=='delivered'}">No Delivered orders.</span>
+		        <span th:if="${statusValue=='ongoing'}">No Ongoing orders.</span>
+		        <span th:if="${statusValue=='cancelled'}">No Cancelled orders.</span>
+	        </td>
+        </tr>
+	</tbody>
+</table>
+
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/website/websiteHead :: website-head('ShopY - Your Smart Shopping Partner')}"></head>
+<style>
+  /* --- Subcategory Slider Container --- */
+  .subcategory-slider-container {
+    position: relative;
+    padding: 20px 40px;
+    background: #EFEFEF;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Scrollable wrapper inside container */
+  .subcategory-cards-wrapper {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .subcategory-cards-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Flex container for cards */
+  .subcategory-cards {
+    display: flex;
+    gap: 50px;
+    height: 260px; /* matches card height */
+    transition: transform 0.5s ease;
+    min-width: max-content; /* expands width to fit all cards */
+  }
+
+  /* Individual subcategory card */
+  .subcategory-card {
+    width: 220px;
+    height: 250px;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    flex: 0 0 auto;
+    transition: transform 0.3s ease;
+    margin-right: 20px;
+  }
+
+  .subcategory-card:hover {
+    transform: scale(1.05);
+  }
+
+  .subcategory-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+
+  /* Slider arrows */
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .slider-arrow.left {
+    left: 10px;
+  }
+
+  .slider-arrow.right {
+    right: 10px;
+  }
+
+  .slider-arrow i {
+    font-size: 20px;
+    color: #333;
+  }
+
+  /* Hero carousel images */
+  .hero-carousel img {
+    display: none;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .hero-carousel img.active {
+    display: block;
+  }
+
+  /* Carousel dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+  }
+
+  .carousel-dot.active {
+    background-color: #007bff;
+  }
+
+  /* Small category cards container */
+  .category-cards {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Individual small category card */
+  .category-card {
+    width: 220px;
+    height: 250px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .category-card:hover {
+    transform: scale(1.05);
+  }
+
+  .category-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+
+</style>
+
+<body>
+  <head th:replace="~{fragments/website/websiteNav :: website-nav}"></head>
+
+  <div style="height: 80px;"></div>
+
+  <!-- Subcategory Slider -->
+  <section class="subcategory-slider-container" data-aos="fade-up">
+  
+  <h2 class="text-center mb-5 fw-bold position-relative display-7 text-uppercase">
+      <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+        All Categories Products 
+       </span>
+    </h2>
+    
+    <div class="subcategory-cards-wrapper" id="subcategoryWrapper">
+      <div class="subcategory-cards shadow-lg" id="subcategoryCards">
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="50" th:each="p : ${productSubCatList}">
+           <a th:href="@{showProductByCategory(id=${p.id})}" style="text-decoration: none; color: inherit;" th:title="'click here to view all ' + ${p.subCategoryName}">
+	          <img alt="" th:src="@{/admin/public/showCatImg(id=${p.id})}">
+	          <p th:text="${p.subCategoryName}">Mobiles</p>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="slider-arrow left" id="subLeftArrow"><i class="bi bi-chevron-left"></i></div>
+    <div class="slider-arrow right" id="subRightArrow"><i class="bi bi-chevron-right"></i></div>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div data-aos="fade-up" data-aos-delay="200">
+      <h1>Welcome to Shopify</h1>
+      <p>Your smart shopping partner for the best deals and quality products.</p>
+    </div>
+
+    <div class="hero-carousel" id="heroCarousel" data-aos="fade">
+      <img th:src="@{/img/c1.jpg}" alt="Camera" class="active" />
+      <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=90" alt="Laptop" />
+      <img th:src="@{/img/m2.jpg}" alt="Phone" />
+    </div>
+
+    <div class="carousel-dots" id="carouselDots">
+      <div class="carousel-dot active" data-index="0"></div>
+      <div class="carousel-dot" data-index="1"></div>
+      <div class="carousel-dot" data-index="2"></div>
+    </div>
+  </section>
+
+  <!-- Category Section -->
+  <section class="category-section" data-aos="fade-up" th:each="m : ${map}">
+    <h2 class="text-center mb-5 fw-bold position-relative display-7 text-uppercase" th:if="${m.value.size() > 0}">
+      <span class="px-3 py-1 border-bottom border-4 border-primary d-inline-block">
+        Best <span th:text="${m.key.categoryName}">Electronics</span>
+      </span>
+    </h2>
+
+    <!-- Slider for > 5 subcategories -->
+    <div class="subcategory-slider-container" th:if="${m.value.size() > 5}">
+      <div class="subcategory-cards-wrapper" th:attr="id='catWrapper__' + ${m.key.id}">
+        <div class="subcategory-cards" th:attr="id='catCards__' + ${m.key.id}">
+          <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="50" th:each="cat : ${m.value}">
+            <a th:href="@{showProductByCategory(id=${cat.id})}" style="text-decoration: none; color: inherit;" th:title="'click here to view all ' + ${cat.subCategoryName}">
+              <img alt="" th:src="@{/admin/public/showCatImg(id=${cat.id})}" width="100%">
+              <p th:text="${cat.subCategoryName}">Smartphones</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="slider-arrow left" th:attr="id='catLeftArrow__' + ${m.key.id}"><i class="bi bi-chevron-left"></i></div>
+      <div class="slider-arrow right" th:attr="id='catRightArrow__' + ${m.key.id}"><i class="bi bi-chevron-right"></i></div>
+    </div>
+
+    <!-- Grid for <= 5 subcategories -->
+    <div class="category-cards" th:if="${m.value.size() <= 5}" style="background-color: #EFEFEF">
+      <div class="category-card" tabindex="0" data-aos="flip-left" data-aos-delay="50" th:each="cat : ${m.value}">
+        <a th:href="@{showProductByCategory(id=${cat.id})}" style="text-decoration: none; color: inherit;" th:title="'click here to view all ' + ${cat.subCategoryName}">
+          <img alt="" th:src="@{/admin/public/showCatImg(id=${cat.id})}" width="150">
+          <p th:text="${cat.subCategoryName}">Smartphones</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+   <footer th:replace="~{fragments/website/websiteFooter :: website-footer}"></footer>
+  <div th:replace="~{fragments/website/websiteScript :: website-script}"></div>
+
+  <script>
+    AOS.init({ once: true, duration: 1000, easing: 'ease-in-out' });
+
+    const heroImages = document.querySelectorAll('#heroCarousel img');
+    const carouselDots = document.querySelectorAll('#carouselDots .carousel-dot');
+    let currentHeroIndex = 0;
+    const showHeroSlide = index => {
+      if (index >= heroImages.length) index = 0;
+      if (index < 0) index = heroImages.length - 1;
+      heroImages.forEach(img => img.classList.remove('active'));
+      carouselDots.forEach(dot => dot.classList.remove('active'));
+      heroImages[index].classList.add('active');
+      carouselDots[index].classList.add('active');
+      currentHeroIndex = index;
+    };
+    let autoSlideInterval = setInterval(() => showHeroSlide(currentHeroIndex + 1), 5000);
+    carouselDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        showHeroSlide(parseInt(dot.dataset.index));
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(() => showHeroSlide(currentHeroIndex + 1), 5000);
+      });
+    });
+
+    // Reusable slider arrow logic
+    const initSlider = (wrapperId, leftId, rightId) => {
+      const wrapper = document.getElementById(wrapperId);
+      const leftArrow = document.getElementById(leftId);
+      const rightArrow = document.getElementById(rightId);
+      const card = wrapper.querySelector('.subcategory-card');
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
+      const gap = parseInt(getComputedStyle(card).marginRight) || 20;
+      const scrollAmount = cardWidth + gap;
+      const updateArrowVisibility = () => {
+        leftArrow.style.display = wrapper.scrollLeft <= 0 ? 'none' : 'flex';
+        rightArrow.style.display = (wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 5) ? 'none' : 'flex';
+      };
+      leftArrow.addEventListener('click', () => wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+      rightArrow.addEventListener('click', () => wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+      wrapper.addEventListener('scroll', updateArrowVisibility);
+      updateArrowVisibility();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initSlider('subcategoryWrapper', 'subLeftArrow', 'subRightArrow');
+      document.querySelectorAll('[id^="catWrapper__"]').forEach(wrapper => {
+        const keyId = wrapper.id.split('__')[1];
+        initSlider(`catWrapper__${keyId}`, `catLeftArrow__${keyId}`, `catRightArrow__${keyId}`);
+      });
+    });
+  </script>
+  
+  <script>
+  $(document).ready(function () {
+    $("input[name='searchInput']").autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          url: "subCategorySuggestions",
+          data: { term: request.term },
+          success: function (data) {
+            response(data);
+          }
+        });
+      },
+      minLength: 1
+    });
+  });
+</script>
+
+  
+  
+</body>
+
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/erp/common-css :: erpCommonCss('Add Purchase')}"></head>
+  	<div th:replace="~{fragments/erp/loader :: loaderFragment}"></div>
+
+<body>
+
+<!-- nav top -->
+<nav th:replace="~{fragments/erp/nav :: navFragment}"></nav>
+<!--end of nav top -->
+
+<!-- sidebar -->
+<div th:replace="~{fragments/erp/sidebar :: erpSidebarFragment}"></div>
+<!-- end sidebar -->
+
+<div class="content">
+  <div th:replace="~{fragments/erp/message :: messageFragment}"></div>
+
+    <form th:object="${purchase}" th:action="@{/admin/savePurchase}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+  <div class="row">
+      
+      <!-- Purchase Details -->
+      <div class="col-12 col-lg-12 mb-4">
+        <div class="card shadow-lg border-0">
+          <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+            <h5 class="mb-0">Add Purchase Details</h5>
+          </div>
+          <div class="card-body mainbody">
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="row">
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Bill No <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" th:field="*{billNo}" placeholder="Enter Bill No" required />
+                <div class="invalid-feedback">Bill number is required.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Date & Time <span class="text-danger">*</span></label>
+                <input type="datetime-local" class="form-control" th:field="*{purchaseDateAndTime}" required />
+                <div class="invalid-feedback">Date and time are required.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Total Price <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" th:field="*{totalPrice}" placeholder="100" required />
+                <div class="invalid-feedback">Total price is required.</div>
+              </div>
+              
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Bill document <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" th:field="*{billFile}" placeholder="100" accept=".txt,.pdf" />
+              </div>
+              
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Payment Mode <span class="text-danger">*</span></label>
+               <select class="form-select" th:field="*{paymentMode}" required>
+				    <option value="">Select Mode</option>
+				    <option th:each="mode : ${paymentModes}" th:value="${mode}"  th:text="${mode}">Cash</option>
+				</select>
+
+                <div class="invalid-feedback">Please select a district.</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendor Details (new section) -->
+      <div class="col-12 col-lg-12 mb-4">
+        <div class="card shadow-lg border-0">
+          <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+            <h5 class="mb-0">Vendor Details</h5>
+          </div>
+          <div class="card-body mainbody">
+            <div class="row">
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" th:field="*{vendorName}" placeholder="Vendor Name" required />
+                <div class="invalid-feedback">Vendor name is required.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Email address <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" th:field="*{addressEmbeddable.email}" placeholder="name@example.com" required />
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" th:field="*{addressEmbeddable.mobileNo}" placeholder="+1 234 567 8900" pattern="^\+?[0-9\s\-]{10,15}$" required />
+                <div class="invalid-feedback">Please enter a valid mobile number.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">City <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" th:field="*{addressEmbeddable.city}" placeholder="Enter city" required />
+                <div class="invalid-feedback">City is required.</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Landmark</label>
+                <input type="text" class="form-control" th:field="*{addressEmbeddable.landMark}" placeholder="Enter nearby landmark" />
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">Pincode <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" th:field="*{addressEmbeddable.pincode}" placeholder="Enter pincode" pattern="^\d{5,10}$" required />
+                <div class="invalid-feedback">Please enter a valid pincode (5–10 digits).</div>
+              </div>
+
+              <div class="col-12 col-lg-6 mb-3">
+                <label class="form-label">District <span class="text-danger">*</span></label>
+                <select class="form-select" th:field="*{addressEmbeddable.district.id}" required>
+                  <option value="">Select district</option>
+                  <option th:each="district : ${districtList}" th:value="${district.id}" th:text="${district.districtName}"></option>
+                </select>
+                <div class="invalid-feedback">Please select a district.</div>
+              </div>
+              
+              
+              <div class="col-12 col-lg-6 mb-3">
+                <label for="file" class="form-label">Upload Image</label>
+					<input type="file" class="form-control" 
+					th:field="*{addressEmbeddable.file}" id="file" name="file" accept=".png, .jpg, .jpeg" />
+              </div>
+              <div id="fileError" class="text-danger mt-2" style="display: none;">File must be less than 10KB.</div></div>
+             
+              <div id="imagePreview" class="mt-3 d-flex justify-content-center">
+				  <img id="previewImg" src="#" alt="Selected Image" class="img-thumbnail" style="max-height: 100px; display: none;" />
+			  </div>
+			  
+			  
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purchase Item Details -->
+      <div class="mt-4">
+        <div class="card shadow-lg border-0">
+          <div class="card-header text-white d-flex justify-content-between align-items-center cards">
+            <h5 class="mb-0">Purchase Items Details</h5>
+            <a th:href="@{/admin/productForm}" target="_blank" class="btn btn-light btn-sm">
+              <i class="bi bi-plus-circle me-1"></i> Add Product
+            </a>
+          </div>
+        </div>
+
+        <table class="table table-bordered" id="tableId">
+          <thead>
+            <tr>
+              <th width="22%">Product</th>
+              <th>Quantity</th>
+              <th>Price per unit</th>
+              <th>Tax %</th>
+              <th>Tax Amount</th>
+              <th>Total Without Tax</th>
+              <th>Total With Tax</th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody">
+            <tr th:each="p , iStat : ${purchase.purchaseItems}">
+            
+				<td style="display: none">
+
+					<input th:field="*{purchaseItems[__${iStat.index}__].id}">
+					<input th:field="*{purchaseItems[__${iStat.index}__].purchase.id}">
+									
+				</td>
+            
+              <td>
+                <select class="form-select" id="product-field" required
+                th:field="*{purchaseItems[__${iStat.index}__].product.id}">
+                  <option value="">Select product</option>
+                  <option th:each="product : ${productList}" th:value="${product.id}" th:text="${product.productname}"></option>
+                </select>
+                           <div class="invalid-feedback">Product is required.</div>
+                
+              </td>
+              <td><input type="number"  th:field="*{purchaseItems[__${iStat.index}__].quantity}"  th:id="'quantity' + ${iStat.index}"  
+               class="form-control" min="1" required></td>
+              <td><input type="number" th:field="*{purchaseItems[__${iStat.index}__].costPricePerUnit}"  th:id="'purchasePrice' + ${iStat.index}"  class="form-control" step="0.01" required></td>
+              <td>
+               <select class="form-select" 
+			        th:id="'tax-field' + ${iStat.index}" 
+			        required 
+			        th:field="*{purchaseItems[__${iStat.index}__].taxPercentage.id}"
+			        th:attr="onchange='getTaxAmount(' + ${iStat.index} + ')'">
+			    <option value="">Select tax</option>
+			    <option th:each="tax : ${taxPercentageList}" 
+			            th:value="${tax.id}" 
+			            th:text="${tax.taxPercentage}">
+			    </option>
+				</select>
+				                  <div class="invalid-feedback">Tax is required.</div>
+				
+
+              </td>
+              <td><input type="number" th:id="'taxAmount'+${iStat.index}" th:field="*{purchaseItems[__${iStat.index}__].taxAmount}"
+               class="form-control" step="0.01" readonly></td>
+              <td><input type="number" th:id="'totalWithoutTax'+${iStat.index}" th:field="*{purchaseItems[__${iStat.index}__].totalPriceBeforeTax}"  class="form-control" step="0.01" readonly></td>
+              <td><input type="number" th:id="'totalWithTax'+${iStat.index}" th:field="*{purchaseItems[__${iStat.index}__].totalPriceWithTax}" class="form-control" step="0.01" readonly></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="text-align: center;">
+        <a  class="anchor" id="add">
+          <i class="fa-solid fa-circle-plus fa-2x"></i>
+        </a>
+        <a class="anchor" id="remove">
+          <i class="fa-solid fa-circle-minus fa-2x"></i>
+        </a>
+      </div>
+
+      <div class="d-flex justify-content-start gap-2 mt-3">
+        <button type="submit" class="btn btn-success px-3 py-1">
+          <i class="bi bi-check-circle me-1"></i> Save
+        </button>
+        <button type="reset" class="btn btn-secondary px-3 py-1">
+          <i class="bi bi-x-circle me-1"></i> Reset
+        </button>
+      </div>
+    </form>
+  </div>
+
+<script th:src="@{/js/image.js}"></script>
+<div th:replace="~{fragments/scripts :: commonScripts}"></div>
+<script th:src="@{/js/sidebarjs/sidebar.js}"></script>
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+	
+	
+    let index = $("#itemsBody tr").length; 
+    const maxFields = 5;
+    
+    var productList = $("#product-field").html();
+    var taxList = $("#tax-field0").html();
+
+    // Function to add a new row
+    $("#add").click(function () {
+        const tableBody = $("#itemsBody");
+
+        if (index < maxFields) {
+            const newRowHTML = `
+            	<tr>
+                
+            	<td>
+                  <select class="form-select" name="purchaseItems[${index}].product.id" required>
+                    ${productList}
+                  </select>
+                  <div class="invalid-feedback">Product is required.</div>
+
+                </td>
+                
+                <td><input type="number" id="quantity${index}" name="purchaseItems[${index}].quantity" class="form-control" min="1" required></td>
+                <td><input type="number" id="purchasePrice${index}" name="purchaseItems[${index}].costPricePerUnit" class="form-control" step="0.01" required></td>
+                <td>
+                  <select class="form-select" onchange="getTaxAmount(${index})" id="tax-field${index}"  name="purchaseItems[${index}].taxPercentage.id" required>
+					${taxList}
+                  </select>
+                  <div class="invalid-feedback">Tax is required.</div>
+
+                </td>
+                <td><input type="number" id="taxAmount${index}" name="purchaseItems[${index}].taxAmount" class="form-control" step="0.01" readonly></td>
+                <td><input type="number" id="totalWithoutTax${index}" name="purchaseItems[${index}].totalPriceBeforeTax" class="form-control" step="0.01" readonly></td>
+                <td><input type="number" id="totalWithTax${index}" name="purchaseItems[${index}].totalPriceWithTax" class="form-control" step="0.01" readonly></td>
+              </tr>
+            `;
+            tableBody.append(newRowHTML);
+            
+            // Initialize Select2 only on new <select> elements
+            tableBody.find('select').select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                dropdownParent: $(document.body)
+            });
+         
+         
+            index++;
+        } else {
+        	showToast("Warning! You can't add more than " + maxFields + " rows.", "warning");
+        }
+    });
+
+    // Function to remove the last row
+    $("#remove").click(function () {
+        const tableBody = $("#itemsBody");
+        const rows = tableBody.find("tr");
+
+        if (rows.length > 1) {
+            rows.last().remove();
+            index--;
+        } else {
+        	showToast("No more extra rows to remove.");
+        }
+    });
+});
+
+function getTaxAmount(index) {
+   
+	var $select = $('#tax-field' + index); // Select element by ID using jQuery
+    var selectedValue = $select.val(); // Get selected value (e.g., tax ID)
+    
+    var selectedText = $select.find('option:selected').text(); // Get selected text (e.g., "18%")
+    var quantity = $('#quantity'+index).val()
+    var purchasePrice = $('#purchasePrice'+index).val()
+    
+    alert(selectedText + " "+quantity + " "+purchasePrice)
+    
+    var actualQuantity = parseFloat(quantity);
+    var actualpurchasePrice = parseFloat(purchasePrice);
+    var taxPercentage = parseFloat(selectedText);
+    
+    
+    
+    var totalTaxAmount = (actualQuantity * actualpurchasePrice) * (taxPercentage / 100);
+    
+    $("#taxAmount"+index).val(totalTaxAmount);
+    
+    var totalCostWithoutTax = actualQuantity * actualpurchasePrice;
+
+    $("#totalWithoutTax"+index).val(totalCostWithoutTax);
+    
+    
+    $("#totalWithTax"+index).val(totalCostWithoutTax + totalTaxAmount);
+    
+    
+}
+</script>
+
+<div th:replace="~{fragments/erp/toast :: toastFragment}"></div>
+
+</body>
+</html>

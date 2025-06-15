@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopY - Your Smart Shopping Partner</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  
+  <!-- AOS CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <style>
+    /* Your existing CSS */
+    body {
+      background-color: #f7f9fb;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.8rem;
+    }
+
+    .nav-link,
+    .btn {
+      font-weight: 500;
+    }
+
+    /* Navbar styles */
+    .custom-navbar {
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .navbar .form-control {
+      border: 1px solid #ced4da;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .navbar .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .navbar .icon-btn {
+      position: relative;
+      padding: 5px 10px;
+      transition: color 0.3s;
+    }
+
+    .navbar .icon-btn:hover {
+      color: #0d6efd;
+    }
+
+    .navbar .badge {
+      font-size: 0.65rem;
+      padding: 4px 6px;
+      font-weight: bold;
+    }
+
+    /* Hero Section - carousel background image replaced by slides */
+    .hero {
+      position: relative;
+      color: white;
+      text-align: center;
+      padding: 220px 20px 80px;
+      border-radius: 0 0 30px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      background-color: #222;
+    }
+
+    /* Carousel container */
+    .hero-carousel {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      height: 400px;
+      margin-bottom: 30px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-carousel img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      opacity: 0;
+      transition: all 0.8s ease;
+      border-radius: 20px;
+    }
+
+    .hero-carousel img.active {
+      left: 0;
+      opacity: 1;
+      position: relative;
+    }
+
+    /* Dots below carousel */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .carousel-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-dot.active {
+      background-color: white;
+    }
+
+    /* Carousel text overlay */
+    .hero-text {
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-top: 15px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Subcategory slider container */
+    .subcategory-slider-container {
+      max-width: 1200px;
+      margin: 20px auto 40px auto;
+      position: relative;
+    }
+
+    .subcategory-cards-wrapper {
+      overflow: hidden;
+    }
+
+    .subcategory-cards {
+      display: flex;
+      gap: 20px;
+      transition: transform 0.4s ease;
+    }
+
+    .subcategory-card {
+      flex: 0 0 calc((100% - 80px) / 5); /* 5 cards per view with 20px gap */
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      padding: 10px;
+      user-select: none;
+    }
+
+    .subcategory-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+    }
+
+    .subcategory-card img {
+      height: 80px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+      margin-bottom: 10px;
+    }
+
+    .subcategory-card p {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    /* Slider arrows */
+    .slider-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .slider-arrow:hover {
+      background-color: #0d6efd;
+      color: white;
+    }
+
+    .slider-arrow.left {
+      left: -20px;
+      display: none; /* Hide left arrow initially */
+    }
+
+    .slider-arrow.right {
+      right: -20px;
+    }
+
+    /* Category sections */
+    .category-section {
+      max-width: 1200px;
+      margin: 60px auto;
+    }
+
+    .category-section h2 {
+      font-weight: 700;
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .category-cards {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .category-card {
+      width: 180px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      user-select: none;
+    }
+
+    .category-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .category-card img {
+      height: 140px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 16px 16px 0 0;
+      margin-bottom: 10px;
+    }
+
+    .category-card p {
+      margin: 0 0 15px 0;
+      font-weight: 600;
+      color: #333;
+      font-size: 1.1rem;
+    }
+
+    /* Product card overrides */
+    .product-card .card img {
+      height: 220px;
+      object-fit: cover;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .product-card .card-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .price-tag {
+      color: #0d6efd;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #333;
+      color: #eee;
+      padding: 40px 20px;
+      margin-top: 80px;
+    }
+
+    footer .footer-section {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 50px;
+      justify-content: center;
+    }
+
+    footer .footer-section div {
+      flex: 1 1 150px;
+    }
+
+    footer h5 {
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    footer a {
+      color: #eee;
+      text-decoration: none;
+      display: block;
+      margin: 6px 0;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #0d6efd;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 1200px) {
+      .subcategory-card {
+        flex: 0 0 calc((100% - 60px) / 4);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .subcategory-card {
+        flex: 0 0 calc((100% - 40px) / 3);
+      }
+
+      .category-cards {
+        gap: 20px;
+      }
+
+      .category-card {
+        width: 140px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .subcategory-card {
+        flex: 0 0 calc((100% - 20px) / 2);
+      }
+
+      .category-card {
+        width: 100%;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light custom-navbar fixed-top shadow-sm">
+    <div class="container-fluid px-4 px-md-5">
+      <a class="navbar-brand" href="#">ShopY</a>
+
+      <form class="d-flex ms-auto me-3" role="search" style="max-width: 520px; flex-grow: 1;">
+        <input class="form-control me-2" type="search" placeholder="Search for products, brands and more" aria-label="Search" />
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+
+      <div class="d-flex align-items-center">
+        <a href="#" class="btn icon-btn position-relative me-3" aria-label="Wishlist">
+          <i class="bi bi-heart fs-4"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            3
+            <span class="visually-hidden">unread messages</span>
+          </span>
+        </a>
+
+        <a href="#" class="btn icon-btn position-relative me-3" aria-label="Cart">
+          <i class="bi bi-cart fs-4"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            6
+            <span class="visually-hidden">items in cart</span>
+          </span>
+        </a>
+
+        <div class="dropdown">
+          <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Account">
+            <i class="bi bi-person-circle fs-4"></i> Account
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Login</a></li>
+            <li><a class="dropdown-item" href="#">Register</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Spacer for fixed navbar -->
+  <div style="height: 80px;"></div>
+
+  <!-- Subcategory Slider -->
+  <section class="subcategory-slider-container" data-aos="fade-up" data-aos-duration="1200" data-aos-easing="ease-in-out">
+    <div class="subcategory-cards-wrapper">
+      <div class="subcategory-cards" id="subcategoryCards">
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="50">
+          <img src="https://images.unsplash.com/photo-1512499617640-c2f999afda72?auto=format&fit=crop&w=500&q=60" alt="Mobiles" />
+          <p>Mobiles</p>
+        </div>
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="100">
+          <img src="https://images.unsplash.com/photo-1580910051076-8016cd15b9b8?auto=format&fit=crop&w=500&q=60" alt="Laptops" />
+          <p>Laptops</p>
+        </div>
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="150">
+          <img src="https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?auto=format&fit=crop&w=500&q=60" alt="Tablets" />
+          <p>Tablets</p>
+        </div>
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="200">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=500&q=60" alt="Cameras" />
+          <p>Cameras</p>
+        </div>
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="250">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=60" alt="Wearables" />
+          <p>Wearables</p>
+        </div>
+        <div class="subcategory-card" tabindex="0" data-aos="zoom-in" data-aos-delay="300">
+          <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=500&q=60" alt="Accessories" />
+          <p>Accessories</p>
+        </div>
+        <!-- Add more as needed -->
+      </div>
+    </div>
+    <div class="slider-arrow left" id="subLeftArrow" aria-label="Scroll Left"><i class="bi bi-chevron-left"></i></div>
+    <div class="slider-arrow right" id="subRightArrow" aria-label="Scroll Right"><i class="bi bi-chevron-right"></i></div>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-carousel" id="heroCarousel" data-aos="fade">
+      <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80" alt="Hero Slide 1" class="active" />
+      <img src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1200&q=80" alt="Hero Slide 2" />
+      <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80" alt="Hero Slide 3" />
+    </div>
+    <div class="carousel-dots" id="carouselDots" aria-label="Carousel Navigation">
+      <div class="carousel-dot active" data-index="0" role="button" tabindex="0" aria-label="Slide 1"></div>
+      <div class="carousel-dot" data-index="1" role="button" tabindex="0" aria-label="Slide 2"></div>
+      <div class="carousel-dot" data-index="2" role="button" tabindex="0" aria-label="Slide 3"></div>
+    </div>
+    <div class="hero-text" data-aos="fade-up" data-aos-delay="200">
+      <h1>Welcome to ShopY</h1>
+      <p>Your smart shopping partner for the best deals and quality products.</p>
+    </div>
+  </section>
+
+  <!-- Category Sections -->
+  <section class="category-section" data-aos="fade-up" data-aos-duration="1000">
+    <h2>Best Electronics</h2>
+    <div class="category-cards">
+      <div class="category-card" tabindex="0" data-aos="flip-left" data-aos-delay="50">
+        <img src="https://images.unsplash.com/photo-1510557880182-3d4d3f0b5b5e?auto=format&fit=crop&w=400&q=70" alt="Smartphones" />
+        <p>Smartphones</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-left" data-aos-delay="100">
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=70" alt="Laptops" />
+        <p>Laptops</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-left" data-aos-delay="150">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=70" alt="Cameras" />
+        <p>Cameras</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-left" data-aos-delay="200">
+        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=70" alt="Headphones" />
+        <p>Headphones</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="category-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+    <h2>Best Mechanical</h2>
+    <div class="category-cards">
+      <div class="category-card" tabindex="0" data-aos="flip-right" data-aos-delay="50">
+        <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=400&q=70" alt="Tools" />
+        <p>Tools</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-right" data-aos-delay="100">
+        <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=400&q=70" alt="Gadgets" />
+        <p>Gadgets</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-right" data-aos-delay="150">
+        <img src="https://images.unsplash.com/photo-1494256997604-768d1f608cac?auto=format&fit=crop&w=400&q=70" alt="Machines" />
+        <p>Machines</p>
+      </div>
+      <div class="category-card" tabindex="0" data-aos="flip-right" data-aos-delay="200">
+        <img src="https://images.unsplash.com/photo-1508896694512-7c1e9ebd2a9b?auto=format&fit=crop&w=400&q=70" alt="Spare Parts" />
+        <p>Spare Parts</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer data-aos="fade-up" data-aos-duration="1200" data-aos-delay="300">
+    <div class="footer-section">
+      <div>
+        <h5>ShopY</h5>
+        <p>Smart shopping partner for all your needs.</p>
+      </div>
+      <div>
+        <h5>Customer Service</h5>
+        <a href="#">Contact Us</a>
+        <a href="#">Returns</a>
+        <a href="#">Shipping</a>
+        <a href="#">FAQs</a>
+      </div>
+      <div>
+        <h5>About</h5>
+        <a href="#">Company Info</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+      </div>
+      <div>
+        <h5>Follow Us</h5>
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="Twitter">Twitter</a>
+        <a href="#" aria-label="Instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AOS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Initialize AOS -->
+  <script>
+    AOS.init({
+      once: true, // animations happen only once on scroll down
+      duration: 1000,
+      easing: 'ease-in-out',
+    });
+  </script>
+
+  <!-- Carousel and Subcategory Slider JS -->
+  <script>
+    // Hero Carousel Logic
+    const heroCarousel = document.getElementById('heroCarousel');
+    const heroImages = heroCarousel.querySelectorAll('img');
+    const carouselDots = document.getElementById('carouselDots').children;
+    let currentHeroIndex = 0;
+    const totalHeroSlides = heroImages.length;
+
+    function showHeroSlide(index) {
+      if (index >= totalHeroSlides) index = 0;
+      if (index < 0) index = totalHeroSlides - 1;
+      // Hide all
+      heroImages.forEach(img => img.classList.remove('active'));
+      [...carouselDots].forEach(dot => dot.classList.remove('active'));
+
+      heroImages[index].classList.add('active');
+      carouselDots[index].classList.add('active');
+      currentHeroIndex = index;
+    }
+
+    [...carouselDots].forEach(dot => {
+      dot.addEventListener('click', () => {
+        showHeroSlide(parseInt(dot.dataset.index));
+        resetAutoSlide();
+      });
+      dot.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showHeroSlide(parseInt(dot.dataset.index));
+          resetAutoSlide();
+        }
+      });
+    });
+
+    // Auto slide every 5 seconds
+    let autoSlideInterval = setInterval(() => {
+      showHeroSlide(currentHeroIndex + 1);
+    }, 5000);
+
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = setInterval(() => {
+        showHeroSlide(currentHeroIndex + 1);
+      }, 5000);
+    }
+
+    // Subcategory Slider Logic
+    const subCards = document.getElementById('subcategoryCards');
+    const leftArrow = document.getElementById('subLeftArrow');
+    const rightArrow = document.getElementById('subRightArrow');
+
+    // Amount to scroll per click (width of one card + gap)
+    const cardStyle = getComputedStyle(document.querySelector('.subcategory-card'));
+    const cardWidth = document.querySelector('.subcategory-card').offsetWidth;
+    const gap = parseInt(cardStyle.marginRight) || 20; // fallback to 20px gap
+    const scrollAmount = cardWidth + gap;
+
+    function updateArrowVisibility() {
+      if (subCards.scrollLeft === 0) {
+        leftArrow.style.display = 'none';
+      } else {
+        leftArrow.style.display = 'flex';
+      }
+      // Check if scrolled to end
+      if (subCards.scrollLeft + subCards.clientWidth >= subCards.scrollWidth - 1) {
+        rightArrow.style.display = 'none';
+      } else {
+        rightArrow.style.display = 'flex';
+      }
+    }
+
+    leftArrow.addEventListener('click', () => {
+      subCards.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    rightArrow.addEventListener('click', () => {
+      subCards.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    subCards.addEventListener('scroll', updateArrowVisibility);
+
+    // Initial check
+    updateArrowVisibility();
+  </script>
+</body>
+
+</html>

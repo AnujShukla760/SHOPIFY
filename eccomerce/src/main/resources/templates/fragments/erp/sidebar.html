@@ -1,0 +1,194 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <div class="sidebar d-none d-md-flex " id="sidebar" th:fragment="erpSidebarFragment">
+    <div class="sidebar-header  fw-bold p-3">
+	<a th:href="@{/customer/showWebsite}"
+   style="display: inline-block; padding: 4px 8px; border-radius: 6px; text-decoration: none;"
+   onmouseover="this.style.backgroundColor='white';"
+   onmouseout="this.style.backgroundColor='';">
+  <img th:src="@{/img/shopify.png}" alt="Logo" style="height: 44px; margin-right: 8px;" />
+</a>
+
+
+	</div>
+
+    <div class="sidebar-inner">
+      <div class="pt-2">
+        <hr class="sidebar-divider" />
+
+        <ul class="nav-first-level" style="list-style:none; padding-left:0; margin:0;">
+
+          <!-- Dashboard -->
+          <li class="shadow-lg">
+            <a th:href="@{/admin/showDashBoard}" class="nav-link ">
+              <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+            </a>
+          </li>
+
+          <!-- Master Setup -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-gear me-2 text-warning"></i> Master Setup
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a th:href="@{/admin/countryForm}" class="submenu-link">
+                  <i class="bi bi-globe me-2 text-info"></i> Country Configure
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/stateForm}" class="submenu-link">
+                  <i class="bi bi-map me-2 text-info"></i> State Configure
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/districtForm}" class="submenu-link">
+                  <i class="bi bi-pin-map me-2 text-info"></i> District Configure
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Organization -->
+          <li class="shadow-lg">
+            <a th:href="@{/admin/organizationForm}" class="nav-link">
+              <i class="bi bi-building me-2 text-success"></i> Organization
+            </a>
+          </li>
+
+          <!-- Product Configuration -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-box me-2 text-danger"></i> Product Configuration
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a th:href="@{/admin/productCategory}" class="submenu-link">
+                  <i class="bi bi-tags me-2 text-warning"></i> Product Category
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/productSubCategory}" class="submenu-link">
+                  <i class="bi bi-tag me-2 text-warning"></i> Product Sub Category
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/tax}" class="submenu-link">
+                  <i class="bi bi-percent me-2 text-warning"></i> Tax
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/taxPercentage}" class="submenu-link">
+                  <i class="bi bi-123 me-2 text-warning"></i> Tax Percentage
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/brandForm}" class="submenu-link">
+<i class="bi bi-gem me-2 text-warning"></i> Brand
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Purchase Orders -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-bag-check me-2 text-info"></i> Purchase Management
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a th:href="@{/admin/purchaseForm}" class="submenu-link">
+                  <i class="bi bi-cart-plus me-2 text-info"></i> Create Purchase
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/purchaseManage}" class="submenu-link">
+                  <i class="bi bi-box-seam me-2 text-info"></i> Manage Purchase
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Product Management -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-currency-dollar me-2 text-success"></i> Product Management
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a th:href="@{/admin/productForm}" class="submenu-link">
+                  <i class="bi bi-file-earmark-text me-2 text-success"></i> Create Product
+                </a>
+              </li>
+              <li>
+                <a th:href="@{/admin/productManage}" class="submenu-link">
+                  <i class="bi bi-wallet2 me-2 text-success"></i> Manage Product
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Reports -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-bar-chart me-2 text-secondary"></i> Reports
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a href="/reports/sales" class="submenu-link">
+                  <i class="bi bi-graph-up-arrow me-2 text-secondary"></i> Sales Report
+                </a>
+              </li>
+              <li>
+                <a href="/reports/purchases" class="submenu-link">
+                  <i class="bi bi-graph-down-arrow me-2 text-secondary"></i> Purchase Report
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          
+          <!-- Order Management -->
+		<li class="menu-item shadow-lg">
+		  <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+		    <i class="bi bi-truck me-2 text-warning"></i> Order Management
+		  </a>
+		  <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+		    <li>
+		      <a th:href="@{/admin/orderList}" class="submenu-link">
+		        <i class="bi bi-list-check me-2 text-warning"></i> View Orders
+		      </a>
+		    </li>
+		  </ul>
+		</li>
+          
+
+          <!-- User Management -->
+          <li class="menu-item shadow-lg">
+            <a href="#" onclick="toggleSubMenu(event)" class="submenu-toggle">
+              <i class="bi bi-people me-2 text-primary"></i> User Management
+            </a>
+            <ul class="nav-second-level submenu" style="list-style:none; padding-left: 20px; margin:0; display: none;">
+              <li>
+                <a th:href="@{/users/usersList}" class="submenu-link">
+                  <i class="bi bi-person-lines-fill me-2 text-primary"></i> User List
+                </a>
+              </li>
+              
+            </ul>
+          </li>
+          
+          <!-- logout -->
+
+			<li class="shadow-lg">
+			  <a th:href="@{/users/logout}" class="nav-link">
+			    <i class="bi bi-box-arrow-right me-2 text-danger"></i> Logout
+			  </a>
+			</li>
+
+
+
+        </ul>
+      </div>
+    </div>
+  </div>
+</html>
